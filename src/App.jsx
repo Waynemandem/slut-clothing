@@ -1,55 +1,29 @@
-import './App.css'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AppProvider } from "./context/AppContext";
+import Home from "./pages/Home";
 
-import {
-  NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuItem,
-  NavigationMenuContent,
-  NavigationMenuTrigger,
-  NavigationMenuLink,
-} from './components/ui/navigation-menu'
+// These pages will be built in subsequent steps:
+// import Shop from "./pages/Shop";
+// import ProductDetail from "./pages/ProductDetail";
+// import Cart from "./pages/Cart";
+// import Login from "./pages/Login";
+// import Account from "./pages/Account";
+// import Admin from "./pages/Admin";
 
-import {
-  Card,
-  CardContent,
-  CardFooter,
-} from './components/ui/card'
-
-import { Button } from './components/ui/button'
-
-
-function App() {
-
+export default function App() {
   return (
-      <div className='App'>
-        <NavigationMenu>
-  <NavigationMenuList>
-    <NavigationMenuItem>
-      <NavigationMenuTrigger>|||</NavigationMenuTrigger>
-      <NavigationMenuContent>
-        <NavigationMenuLink>Menu</NavigationMenuLink>
-        <NavigationMenuLink>Order</NavigationMenuLink>
-        <NavigationMenuLink>Account</NavigationMenuLink>
-        <NavigationMenuLink>Settings</NavigationMenuLink>
-      </NavigationMenuContent>
-    </NavigationMenuItem>
-  </NavigationMenuList>
-</NavigationMenu>
-
-<Card className="w-[300px]">
-  <img src="/hoodie.jpg" className="rounded-t-xl" />
-
-  <CardContent>
-    <h3 className="font-semibold">Street Hoodie</h3>
-    <p className="text-muted-foreground">₦18,000</p>
-  </CardContent>
-
-  <CardFooter>
-    <Button>Add to Cart</Button>
-  </CardFooter>
-</Card>
-      </div>
-  )
+    <AppProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+                <Home />
+            }
+          />
+          {/* Add more routes here as pages are built */}
+        </Routes>
+      </BrowserRouter>
+    </AppProvider>
+  );
 }
-
-export default App 
