@@ -218,3 +218,17 @@ button:focus-visible {
     @apply bg-background text-foreground;
   }
 }
+
+/* Glass effect utilities */
+
+.glass {
+  @apply backdrop-blur-xl bg-white/60 border border-white/20 shadow-lg;
+}
+
+.glass-dark {
+  @apply backdrop-blur-xl bg-black/40 border border-white/10 shadow-xl;
+}
+
+.glass-card {
+  @apply backdrop-blur-lg bg-white/70 border border-neutral-200/50 shadow-sm;
+}
