@@ -1,82 +1,44 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+// src/App.jsx
+// ─────────────────────────────────────────────────────────────────────────────
+// Root of the application.
+// Declares all routes and wraps everything in AppProvider.
+//
+// TO ADD A NEW PAGE:
+//   1. Create the page file in src/pages/
+//   2. Import it here
+//   3. Add a <Route> inside <Routes>
+// ─────────────────────────────────────────────────────────────────────────────
 
-const AppContext = createContext({});
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AppProvider } from "./context/AppContext";
+import Layout from "./components/Layout";
+import Home from "./pages/Home";
+import Shop from "./pages/Shop";
 
-export function AppProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [cart, setCart] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("slut_cart") || "[]");
-    } catch {
-      return [];
-    }
-  });
+// Uncomment as you build each page:
+// import ProductDetail from "./pages/ProductDetail";
+// import Cart          from "./pages/Cart";
+// import Login         from "./pages/Login";
+// import Account       from "./pages/Account";
+// import Admin         from "./pages/Admin";
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-    return () => listener.subscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("slut_cart", JSON.stringify(cart));
-  }, [cart]);
-
-  const addToCart = (product, size, quantity = 1) => {
-    setCart((prev) => {
-      const existing = prev.find(
-        (i) => i.id === product.id && i.size === size
-      );
-      if (existing) {
-        return prev.map((i) =>
-          i.id === product.id && i.size === size
-            ? { ...i, quantity: i.quantity + quantity }
-            : i
-        );
-      }
-      return [...prev, { ...product, size, quantity }];
-    });
-  };
-
-  const removeFromCart = (id, size) => {
-    setCart((prev) => prev.filter((i) => !(i.id === id && i.size === size)));
-  };
-
-  const updateQuantity = (id, size, quantity) => {
-    if (quantity <= 0) return removeFromCart(id, size);
-    setCart((prev) =>
-      prev.map((i) => (i.id === id && i.size === size ? { ...i, quantity } : i))
-    );
-  };
-
-  const clearCart = () => setCart([]);
-
-  const cartCount = cart.reduce((sum, i) => sum + i.quantity, 0);
-  const cartTotal = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
-
+export default function App() {
   return (
-    <AppContext.Provider
-      value={{
-        user,
-        cart,
-        cartCount,
-        cartTotal,
-        addToCart,
-        removeFromCart,
-        updateQuantity,
-        clearCart,
-      }}
-    >
-      {children}
-    </AppContext.Provider>
+    <AppProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/"      element={<Layout><Home /></Layout>} />
+          <Route path="/shop"  element={<Layout><Shop /></Layout>} />
+
+          {/* Add routes here as pages are built:
+          <Route path="/product/:id" element={<Layout><ProductDetail /></Layout>} />
+          <Route path="/cart"        element={<Layout><Cart /></Layout>} />
+          <Route path="/login"       element={<Layout><Login /></Layout>} />
+          <Route path="/account"     element={<Layout><Account /></Layout>} />
+          <Route path="/admin"       element={<Layout><Admin /></Layout>} />
+          */}
+        </Routes>
+      </BrowserRouter>
+    </AppProvider>
   );
 }
-
-export const useApp = () => useContext(AppContext);
-
-export default AppProvider;
