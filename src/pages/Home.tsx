@@ -6,7 +6,7 @@
 
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '../components/ui/button';
 import HeroSection from '@/components/HeroSection';
 import ProductGrid from '@/components/ProductGrid';
 import { useFeaturedProducts } from '@/hooks/useProducts';

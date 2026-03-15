@@ -8,12 +8,13 @@
 //   2. Import it here
 //   3. Add a <Route> inside <Routes>
 // ─────────────────────────────────────────────────────────────────────────────
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
-import Layout from "./components/Layout";
+import Layout from "./layout/Layout";   // ← add this
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
+
+
 
 // Uncomment as you build each page:
 // import ProductDetail from "./pages/ProductDetail";

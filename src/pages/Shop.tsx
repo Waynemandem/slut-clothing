@@ -19,7 +19,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { SlidersHorizontal, Search, X } from "lucide-react";
-import { Button } from "../components/ui/button";
+import { Button } from '../components/ui/button';
 import { Input } from "../components/ui/input";
 import {
   Sheet,

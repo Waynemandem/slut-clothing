@@ -14,10 +14,12 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ShoppingBag, User, Menu, X, Search } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
-import { Button } from "./ui/button";
-import CartDrawer from "./CartDrawer";
+import { Sheet, SheetContent, SheetTrigger } from "../components/ui/sheet";
+import { Button } from "../components/ui/button";
+import CartDrawer from "../components/CartDrawer";
 import { useApp } from "../context/AppContext";
+
+
 
 const NAV_LINKS = [
   { label: "New In",      href: "/shop?filter=new" },
