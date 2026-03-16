@@ -21,9 +21,9 @@ export default function Home() {
       <HeroSection />
 
       {/* ── 2. Marquee strip ── */}
-      <div className="bg-black py-3 overflow-hidden select-none" aria-hidden>
-        <div className="flex animate-marquee whitespace-nowrap">
-          {Array.from({ length: 10 }).map((_, i) => (
+      <div className="relative bg-black py-3 overflow-hidden select-none" aria-hidden>
+        <div className="flex w-max animate-marquee whitespace-nowrap">
+          {Array.from({ length: 2 }).map((_, i) => (
             <span
               key={i}
               className="text-white text-[10px] tracking-[0.25em] font-medium mx-4 uppercase opacity-80"
@@ -78,7 +78,7 @@ export default function Home() {
       </section>
 
       {/* ── 4. Editorial split ── */}
-      <section className="grid md:grid-cols-2">
+      <section className="grid md:grid-cols-2 w-full overflow-hidden">
         {[
           {
             img: 'https://images.unsplash.com/photo-1523398002811-999ca8dec234?w=800&q=80',

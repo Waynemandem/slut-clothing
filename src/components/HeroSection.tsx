@@ -23,7 +23,7 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({
-  imageUrl = 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1600&q=80',
+  imageUrl = 'https://i.pinimg.com/1200x/b3/bc/a9/b3bca97d3f83e13d5e7e7f86d53f1a4f.jpg',
   eyebrow = 'SS 2025 Collection',
   heading = 'WEAR YOUR\nTRUTH',
   subheading = 'Unapologetically bold. Designed for those who refuse to blend in.',
@@ -31,7 +31,7 @@ export default function HeroSection({
   secondaryCta = { label: 'New Arrivals', href: '/shop?filter=new' },
 }: HeroSectionProps) {
   return (
-    <section className="relative h-screen min-h-[640px] flex items-end overflow-hidden">
+    <section className="relative w-full h-screen min-h-[640px] flex items-end overflow-hidden">
 
       {/* ── Background layer ── */}
       <div className="absolute inset-0 bg-black">
