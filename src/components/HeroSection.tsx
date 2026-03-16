@@ -23,7 +23,7 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({
-  imageUrl = 'https://i.pinimg.com/1200x/b3/bc/a9/b3bca97d3f83e13d5e7e7f86d53f1a4f.jpg',
+  imageUrl = 'https://i.pinimg.com/736x/16/2f/3f/162f3f5e00d991a4cf2db0a129012182.jpg',
   eyebrow = 'SS 2025 Collection',
   heading = 'WEAR YOUR\nTRUTH',
   subheading = 'Unapologetically bold. Designed for those who refuse to blend in.',
