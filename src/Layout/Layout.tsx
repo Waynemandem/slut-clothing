@@ -12,7 +12,7 @@ interface LayoutProps {
   children: ReactNode;
 }
 
-export default function Layout({ children }: LayoutProps) {
+function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -21,3 +21,5 @@ export default function Layout({ children }: LayoutProps) {
     </div>
   );
 }
+
+export default Layout;
