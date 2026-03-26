@@ -10,9 +10,35 @@ import { Button } from '../components/ui/button';
 import HeroSection from '@/components/HeroSection';
 import ProductGrid from '@/components/ProductGrid';
 import { useFeaturedProducts } from '@/hooks/useProducts';
+import { FormEvent, JSX } from 'react';
 
-export default function Home() {
+type Panel = {
+  img: string;
+  label: string;
+  title: string;
+  href: string;
+  cta: string;
+};
+
+export default function Home(): JSX.Element {
   const { products, loading } = useFeaturedProducts();
+
+  const editorialPanels: Panel[] = [
+    {
+      img: 'https://images.unsplash.com/photo-1523398002811-999ca8dec234?w=800&q=80',
+      label: 'Collection',
+      title: 'THE ESSENTIALS',
+      href: '/shop?filter=essentials',
+      cta: 'Shop Now',
+    },
+    {
+      img: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&q=80',
+      label: 'Limited',
+      title: 'NIGHT SERIES',
+      href: '/shop?filter=limited',
+      cta: 'Explore',
+    },
+  ];
 
   return (
     <div className="bg-white">
@@ -62,7 +88,6 @@ export default function Home() {
         <ProductGrid
           products={products}
           loading={loading}
-          columns={4}
         />
 
         <div className="text-center mt-10 md:hidden">
@@ -79,22 +104,7 @@ export default function Home() {
 
       {/* ── 4. Editorial split ── */}
       <section className="grid md:grid-cols-2 w-full overflow-hidden">
-        {[
-          {
-            img: 'https://images.unsplash.com/photo-1523398002811-999ca8dec234?w=800&q=80',
-            label: 'Collection',
-            title: 'THE ESSENTIALS',
-            href: '/shop?filter=essentials',
-            cta: 'Shop Now',
-          },
-          {
-            img: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&q=80',
-            label: 'Limited',
-            title: 'NIGHT SERIES',
-            href: '/shop?filter=limited',
-            cta: 'Explore',
-          },
-        ].map(panel => (
+        {editorialPanels.map(panel => (
           <div
             key={panel.title}
             className="relative aspect-square bg-neutral-900 overflow-hidden group"
@@ -174,7 +184,7 @@ export default function Home() {
         </p>
         <form
           className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
-          onSubmit={e => e.preventDefault()}
+          onSubmit={(e: FormEvent) => e.preventDefault()}
         >
           <input
             type="email"

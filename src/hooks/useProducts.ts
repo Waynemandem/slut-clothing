@@ -14,9 +14,16 @@ import type { Product, ProductFilters } from '@/types';
 
 // ── useProducts — filtered product list ──────────────────────────────────────
 
-export function useProducts(filters: Partial<ProductFilters> = {}) {
+interface UseProductsResult {
+  products: Product[];
+  loading: boolean;
+  error: string | null;
+  refetch: () => Promise<void>;
+}
+
+export function useProducts(filters: Partial<ProductFilters> = {}): UseProductsResult {
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   // Serialize filters to detect changes safely in the dependency array
@@ -42,9 +49,15 @@ export function useProducts(filters: Partial<ProductFilters> = {}) {
 
 // ── useFeaturedProducts — home page featured grid ───────────────────────────
 
-export function useFeaturedProducts() {
+interface UseFeaturedProductsResult {
+  products: Product[];
+  loading: boolean;
+  error: string | null;
+}
+
+export function useFeaturedProducts(): UseFeaturedProductsResult {
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -61,9 +74,15 @@ export function useFeaturedProducts() {
 
 // ── useProduct — single product by slug ──────────────────────────────────────
 
-export function useProduct(slug: string) {
+interface UseProductResult {
+  product: Product | null;
+  loading: boolean;
+  error: string | null;
+}
+
+export function useProduct(slug: string): UseProductResult {
   const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

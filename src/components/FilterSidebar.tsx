@@ -20,10 +20,9 @@
 //   </Sheet>
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import type { ProductFilters, SortOption } from "../types";
-
+import { JSX, ReactNode } from 'react';
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface FilterSidebarProps {
   filters: ProductFilters;
@@ -58,7 +57,7 @@ export default function FilterSidebar({
   onChange,
   onClear,
   resultCount,
-}: FilterSidebarProps) {
+}: FilterSidebarProps): JSX.Element {
   // Derived: check if any non-default filter is active so we can show "Clear All"
   const hasActiveFilters =
     filters.category !== null ||
@@ -193,7 +192,7 @@ function FilterSection({
 }: {
   title: string;
   children: React.ReactNode;
-}) {
+}): JSX.Element {
   return (
     <div className="space-y-3">
       <p className="text-[10px] font-bold tracking-[0.25em] uppercase text-neutral-400">
@@ -216,7 +215,7 @@ function FilterPill({
   label: string;
   active: boolean;
   onClick: () => void;
-}) {
+}): JSX.Element {
   return (
     <button
       onClick={onClick}

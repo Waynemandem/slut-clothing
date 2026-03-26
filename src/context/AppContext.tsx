@@ -47,9 +47,9 @@ function loadCart(): CartItem[] {
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 
-export function AppProvider({ children }: { children: ReactNode }) {
+export function AppProvider({ children }: { children: ReactNode }): JSX.Element {
   const [user, setUser] = useState<User | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [cart, setCart] = useState<CartItem[]>(loadCart);
 
   // ── Auth listener ──

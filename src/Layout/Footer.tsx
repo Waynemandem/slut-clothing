@@ -5,14 +5,15 @@
 
 import { Link } from 'react-router-dom';
 import { Instagram, Twitter } from 'lucide-react';
+import { JSX } from 'react';
 
 const SHOP_LINKS = ['New In', 'All Products', 'T-Shirts', 'Hoodies', 'Accessories'];
 const HELP_LINKS = ['FAQ', 'Shipping & Returns', 'Size Guide', 'Contact Us'];
 const COMPANY_LINKS = ['About', 'Careers', 'Press', 'Sustainability'];
 
-export default function Footer() {
+export default function Footer(): JSX.Element {
   return (
-    <footer className="bg-black text-white pt-16 pb-8">
+    <footer className="bg-black  text-white pt-16 pb-8">
       <div className="max-w-screen-xl mx-auto px-6 md:px-10">
 
         {/* ── Main grid ── */}

@@ -12,7 +12,7 @@ interface LayoutProps {
   children: ReactNode;
 }
 
-function Layout({ children }: LayoutProps) {
+function Layout({ children }: LayoutProps): JSX.Element {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />

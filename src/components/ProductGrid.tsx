@@ -37,7 +37,7 @@ export default function ProductGrid({
   emptyAction,
   emptyTitle,
   emptyMessage,
-}: ProductGridProps) {
+}: ProductGridProps): JSX.Element {
   return (
     /*
       Grid layout:

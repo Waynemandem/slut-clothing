@@ -1,4 +1,4 @@
-// src/App.jsx
+// src/App.tsx
 // ─────────────────────────────────────────────────────────────────────────────
 // Root of the application.
 // Declares all routes and wraps everything in AppProvider.
@@ -10,11 +10,10 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
-import Layout from "./layout/Layout.tsx";   // ← add this
+import Layout from "./layout/Layout";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
-
-
+import { JSX } from "react";
 
 // Uncomment as you build each page:
 // import ProductDetail from "./pages/ProductDetail";
@@ -23,7 +22,7 @@ import Shop from "./pages/Shop";
 // import Account       from "./pages/Account";
 // import Admin         from "./pages/Admin";
 
-export default function App() {
+export default function App(): JSX.Element {
   return (
     <AppProvider>
       <BrowserRouter>

@@ -1,4 +1,4 @@
-// src/components/Navbar.tsx
+// src/layout/Navbar.tsx
 // ─────────────────────────────────────────────────────────────────────────────
 // Fixed top navigation.
 //
@@ -11,7 +11,7 @@
 //   - Shows Login or Account icon based on Supabase auth state
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, JSX } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ShoppingBag, User, Menu, X, Search } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "../components/ui/sheet";
@@ -19,20 +19,23 @@ import { Button } from "../components/ui/button";
 import CartDrawer from "../components/CartDrawer";
 import { useApp } from "../context/AppContext";
 
+type NavLink = {
+  label: string;
+  href: string;
+};
 
-
-const NAV_LINKS = [
+const NAV_LINKS: NavLink[] = [
   { label: "New In",      href: "/shop?filter=new" },
   { label: "Shop",        href: "/shop"             },
   { label: "Collections", href: "/shop?sort=newest" },
   { label: "About",       href: "/about"            },
 ];
 
-export default function Navbar() {
+export default function Navbar(): JSX.Element {
   const { cartCount, user } = useApp();
-  const [scrolled, setScrolled]         = useState(false);
-  const [mobileOpen, setMobileOpen]     = useState(false);
-  const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
+  const [scrolled, setScrolled] = useState<boolean>(false);
+  const [mobileOpen, setMobileOpen] = useState<boolean>(false);
+  const [cartDrawerOpen, setCartDrawerOpen] = useState<boolean>(false);
   const location = useLocation();
   const isHome = location.pathname === "/";
 

@@ -4,7 +4,7 @@
 // Supports image hover swap, New/Sale badges, wishlist heart.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState } from 'react';
+import { useState, JSX, MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +17,7 @@ interface ProductCardProps {
   className?: string;
 }
 
-export default function ProductCard({ product, className }: ProductCardProps) {
+export default function ProductCard({ product, className }: ProductCardProps): JSX.Element {
   const [hovered, setHovered] = useState(false);
   const [wished, setWished] = useState(false);
 
@@ -68,7 +68,7 @@ export default function ProductCard({ product, className }: ProductCardProps) {
 
         {/* ── Wishlist (top right, appears on hover) ── */}
         <button
-          onClick={e => {
+          onClick={(e: MouseEvent) => {
             e.preventDefault(); // Don't navigate to product
             setWished(prev => !prev);
           }}
