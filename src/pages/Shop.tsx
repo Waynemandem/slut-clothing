@@ -113,21 +113,16 @@ export default function Shop(): JSX.Element {
 
 
   // ── Filters from URL (so filters survive refresh and can be shared) ───────
+  const urlSort = searchParams.get("sort");
+  const isValidSort = urlSort && urlSort in SORT_LABELS;
 
   const filters: ProductFilters = {
-
     category:    searchParams.get("category"),
-
     minPrice:    searchParams.get("minPrice") ? Number(searchParams.get("minPrice")) : null,
-
     maxPrice:    searchParams.get("maxPrice") ? Number(searchParams.get("maxPrice")) : null,
-
     inStockOnly: searchParams.get("inStock") === "true",
-
-    sort:        (searchParams.get("sort") as SortOption) || "newest",
-
+    sort:        isValidSort ? (urlSort as SortOption) : "newest",
     search:      searchParams.get("search") || "",
-
   };
 
 
