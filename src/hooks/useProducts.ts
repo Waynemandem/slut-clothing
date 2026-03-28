@@ -6,9 +6,9 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import {
-  getProducts,
-  getFeaturedProducts,
-  getProductBySlug,
+  fetchProducts,
+  fetchFeaturedProducts,
+  fetchProductBySlug,
 } from '@/services/products';
 import type { Product, ProductFilters } from '@/types';
 
@@ -32,14 +32,13 @@ export function useProducts(filters: Partial<ProductFilters> = {}): UseProductsR
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
-    try {
-      const data = await getProducts(JSON.parse(filtersKey));
+    const { data, error } = await fetchProducts(JSON.parse(filtersKey));
+    if (error) {
+      setError(error);
+    } else if (data) {
       setProducts(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load products');
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   }, [filtersKey]);
 
   useEffect(() => { load(); }, [load]);
@@ -61,12 +60,18 @@ export function useFeaturedProducts(): UseFeaturedProductsResult {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getFeaturedProducts()
-      .then(setProducts)
-      .catch(err =>
-        setError(err instanceof Error ? err.message : 'Failed to load')
-      )
-      .finally(() => setLoading(false));
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      const { data, error } = await fetchFeaturedProducts();
+      if (error) {
+        setError(error);
+      } else if (data) {
+        setProducts(data);
+      }
+      setLoading(false);
+    };
+    load();
   }, []);
 
   return { products, loading, error };
@@ -86,14 +91,22 @@ export function useProduct(slug: string): UseProductResult {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!slug) return;
-    setLoading(true);
-    getProductBySlug(slug)
-      .then(setProduct)
-      .catch(err =>
-        setError(err instanceof Error ? err.message : 'Product not found')
-      )
-      .finally(() => setLoading(false));
+    if (!slug) {
+      setLoading(false);
+      return;
+    }
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      const { data, error } = await fetchProductBySlug(slug);
+      if (error) {
+        setError(error);
+      } else {
+        setProduct(data);
+      }
+      setLoading(false);
+    };
+    load();
   }, [slug]);
 
   return { product, loading, error };
