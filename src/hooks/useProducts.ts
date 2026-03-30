@@ -32,13 +32,14 @@ export function useProducts(filters: Partial<ProductFilters> = {}): UseProductsR
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
-    const { data, error } = await fetchProducts(JSON.parse(filtersKey));
-    if (error) {
+    const { data, error } = await fetchProducts(filters);
+    if (error) 
       setError(error);
-    } else if (data) {
+     else if (data) 
       setProducts(data);
-    }
+    
     setLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersKey]);
 
   useEffect(() => { load(); }, [load]);

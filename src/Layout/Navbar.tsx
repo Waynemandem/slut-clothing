@@ -59,7 +59,7 @@ export default function Navbar(): JSX.Element {
     ? "bg-transparent"
     : "glass border-b border-white/10"; // glassmorphism when scrolled / non-home
 
-  const textColor   = transparent ? "text-black"    : "text-foreground";
+  const textColor   = transparent ? "text-white"    : "text-foreground";
   const hoverColor  = transparent ? "hover:text-white/60" : "hover:text-neutral-400";
   const paddingY    = scrolled    ? "py-3"           : "py-4"; // shrinks on scroll
 
@@ -80,7 +80,9 @@ export default function Navbar(): JSX.Element {
             className={`text-xl font-black tracking-[0.3em] uppercase transition-colors duration-300 text-black`}
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
           >
-            SLUT
+            <img 
+            src="public/logo.svg" 
+            alt="SLUT" />
           </Link>
 
           {/* ── Desktop nav links ── */}

@@ -20,10 +20,7 @@ type Panel = {
   cta: string;
 };
 
-export default function Home(): JSX.Element {
-  const { products, loading } = useFeaturedProducts();
-
-  const editorialPanels: Panel[] = [
+const editorialPanels: Panel[] = [
     {
       img: 'https://images.unsplash.com/photo-1523398002811-999ca8dec234?w=800&q=80',
       label: 'Collection',
@@ -40,6 +37,11 @@ export default function Home(): JSX.Element {
     },
   ];
 
+
+export default function Home(): JSX.Element {
+  const { products, loading } = useFeaturedProducts();
+
+  
   return (
     <div className="bg-white">
 

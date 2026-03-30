@@ -66,11 +66,16 @@ export default function Shop(): JSX.Element {
   };
 
   // ── Derived values ────────────────────────────────────────────────────────
-  const activeFilterCount = Object.values(filters).filter(value => {
-    if (typeof value === 'boolean') return value;
-    if (typeof value === 'string') return value && value !== 'newest';
-    return value !== null;
-  }).length - (filters.search ? 1 : 0) + (debouncedSearch ? 1 : 0);
+ // ✅ Clear and explicit — count exactly what's active
+const activeFilterCount = [
+  filters.category !== null,
+  filters.minPrice !== null,
+  filters.maxPrice !== null,
+  filters.inStockOnly === true,
+  filters.sort !== 'newest',
+].filter(Boolean).length;
+// Note: search is intentionally excluded from the badge count
+
 
   const pageTitle = filters.category ?? "All Products";
   const isLoading = productsLoading;

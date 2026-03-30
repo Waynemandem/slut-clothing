@@ -10,7 +10,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
-import Layout from "@/layout/Layout";
+import Layout from "@/layout/index";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import { JSX } from "react";

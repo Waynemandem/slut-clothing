@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+
 
 @custom-variant dark (&:is(.dark *));
 
@@ -35,18 +37,6 @@ a, button {
 }
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
@@ -81,59 +71,6 @@ a, button {
   --sidebar-ring: oklch(0.705 0.015 286.067);
 }
 
-footer a {
-  font-weight: 500;
-  color: white;
-  text-decoration: inherit;
-}
-a:hover {
-  color: red;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-  /* overflow-x: hidden; */
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: red;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -216,7 +153,25 @@ button:focus-visible {
   }
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden;          /* ← uncomment this */
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    min-height: 100vh;
+    /* DELETE: display: flex; place-items: center; */
   }
+
+
+  /* DELETE the entire raw button {} block */
+  /* DELETE a:hover { color: red } */
+  h1 { font-size: inherit; line-height: inherit; } /* reset Vite's 3.2em */
+}
+
+.glass      { @apply backdrop-blur-xl bg-white/60 border border-white/20 shadow-lg; }
+.glass-dark { @apply backdrop-blur-xl bg-black/40 border border-white/10 shadow-xl; }
+.glass-card { @apply backdrop-blur-lg bg-white/70 border border-neutral-200/50 shadow-sm; }
+
+
 }
 
 /* Glass effect utilities */

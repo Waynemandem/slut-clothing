@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { supabase } from '@/lib/supabase';
-import type { Order, CartItem, ShippingAddress } from '@/types';
+import type { Order, CartItem, ShippingAddress, ServiceResult } from '@/types';
 
 /** Create a new order. Called after successful Stripe payment. */
 export async function createOrder(params: {
@@ -13,8 +13,8 @@ export async function createOrder(params: {
   total: number;
   shippingAddress: ShippingAddress;
   stripeSessionId?: string;
-}): Promise<Order> {
-  const { data, error } = await supabase
+}): Promise<ServiceResult<Order>> {
+    const { data, error } = await supabase.from('orders').insert({...}).select().single();
     .from('orders')
     .insert({
       user_id: params.userId,
@@ -27,9 +27,8 @@ export async function createOrder(params: {
     .select()
     .single();
 
-  if (error) throw new Error(error.message);
-  return data;
-}
+  if (error) return { data: null, error: error.message };
+    return { data, error: null };
 
 /** Fetch all orders for the currently logged-in user. */
 export async function getUserOrders(userId: string): Promise<Order[]> {
