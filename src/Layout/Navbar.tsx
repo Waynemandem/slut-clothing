@@ -81,7 +81,7 @@ export default function Navbar(): JSX.Element {
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
           >
             <img 
-            src="public/logo.svg" 
+            src="/logo.svg" 
             alt="SLUT" />
           </Link>
 
