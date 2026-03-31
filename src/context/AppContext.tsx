@@ -47,20 +47,39 @@ function loadCart(): CartItem[] {
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 
-export function AppProvider({ children }: { children: ReactNode }): JSX.Element {
+// ✅ AFTER — useCallback gives it a stable reference React can track
+
+export function AppProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [cart, setCart] = useState<CartItem[]>(loadCart);
 
-  // ── Auth listener ──
+  // Step 1: Define checkAdmin BEFORE the effect, wrapped in useCallback.
+  // useCallback means: "create this function once and reuse the same reference
+  // unless its dependencies change." Since it has no deps (supabase is module-level
+  // and stable), it's created exactly once — no stale closure possible.
+  const checkAdmin = useCallback(async (userId: string | undefined) => {
+    if (!userId) {
+      setIsAdmin(false);
+      return;
+    }
+    const { data } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', userId)
+      .single();
+    setIsAdmin(data?.is_admin ?? false);
+  }, []); // ← empty deps is correct: supabase client never changes
+
+  // Step 2: Now add checkAdmin to the useEffect dependency array.
+  // Because checkAdmin is stable (useCallback with []), this effect
+  // still only runs once — but ESLint is now satisfied and the closure is safe.
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       checkAdmin(session?.user?.id);
     });
 
-    // Subscribe to auth changes (login, logout, token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null);
@@ -69,23 +88,13 @@ export function AppProvider({ children }: { children: ReactNode }): JSX.Element 
     );
 
     return () => subscription.unsubscribe();
-  }, []);
-
-  // Check if the logged-in user has admin role in the profiles table
-  async function checkAdmin(userId: string | undefined) {
-    if (!userId) { setIsAdmin(false); return; }
-    const { data } = await supabase
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', userId)
-      .single();
-    setIsAdmin(data?.is_admin ?? false);
-  }
+  }, [checkAdmin]); // ✅ checkAdmin is now in deps — safe, correct, lint-happy
 
   // ── Persist cart to localStorage whenever it changes ──
   useEffect(() => {
     localStorage.setItem('slut_cart', JSON.stringify(cart));
   }, [cart]);
+
 
   // ── Cart mutations ──
 
