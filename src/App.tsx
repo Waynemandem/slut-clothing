@@ -1,18 +1,12 @@
 // src/App.tsx
-// ─────────────────────────────────────────────────────────────────────────────
-// Root of the application.
-// Declares all routes and wraps everything in AppProvider.
-//
-// TO ADD A NEW PAGE:
-//   1. Create the page file in src/pages/
-//   2. Import it here
-//   3. Add a <Route> inside <Routes>
-// ─────────────────────────────────────────────────────────────────────────────
+// Root of the application. Declares all routes and wraps everything in AppProvider.
+// TO ADD A NEW PAGE: create in src/pages/, import here, add a <Route> inside <Routes>
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
 import Layout from "./layouts/Layout";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
+import About from "./pages/About";
 import { JSX } from "react";
 
 // Uncomment as you build each page:
@@ -29,6 +23,7 @@ export default function App(): JSX.Element {
         <Routes>
           <Route path="/"      element={<Layout><Home /></Layout>} />
           <Route path="/shop"  element={<Layout><Shop /></Layout>} />
+          <Route path="/about" element={<Layout><About /></Layout>} />
 
           {/* Add routes here as pages are built:
           <Route path="/product/:id" element={<Layout><ProductDetail /></Layout>} />
