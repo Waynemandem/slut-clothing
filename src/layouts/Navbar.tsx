@@ -57,7 +57,7 @@ export default function Navbar(): JSX.Element {
 
   const navBg = transparent
     ? "bg-transparent"
-    : "glass border-b border-white/10"; // glassmorphism when scrolled / non-home
+    : "bg-white/5 backdrop-blur-xl border-b border-neutral-200/60 shadow-sm"; // frosted glass light
 
   const textColor   = transparent ? "text-white"    : "text-foreground";
   const hoverColor  = transparent ? "hover:text-white/60" : "hover:text-neutral-400";
