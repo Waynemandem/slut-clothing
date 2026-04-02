@@ -157,7 +157,7 @@ export default function Home(): JSX.Element {
           </blockquote>
           <p className="text-white/40 text-sm leading-relaxed max-w-lg mx-auto">
             DESIRE IS NOT A CRIME
-              Desire was never the problem. Fear was.
+            <br />  Desire was never the problem. Fear was.
    
               We stopped asking
           </p>
