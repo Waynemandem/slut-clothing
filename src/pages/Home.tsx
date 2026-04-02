@@ -51,12 +51,12 @@ export default function Home(): JSX.Element {
       {/* ── 2. Marquee strip ── */}
       <div className="relative bg-black py-3 overflow-hidden select-none" aria-hidden>
         <div className="flex w-max animate-marquee whitespace-nowrap">
-          {Array.from({ length: 2 }).map((_, i) => (
+          {Array.from({ length: 8 }).map((_, i) => (
             <span
               key={i}
-              className="text-white text-[10px] tracking-[0.25em] font-medium mx-4 uppercase opacity-80"
+              className="text-white text-[10px] tracking-[0.25em] font-medium mx-8 uppercase opacity-80 shrink-0"
             >
-              SLUT CLOTHING · NEW COLLECTION · SS25 · FREE SHIPPING OVER $150 ·{' '}
+              SLUT CLOTHING · NEW COLLECTION · SS25 · FREE SHIPPING OVER $150
             </span>
           ))}
         </div>
@@ -153,12 +153,13 @@ export default function Home(): JSX.Element {
               letterSpacing: '0.02em',
             }}
           >
-            "FASHION IS THE ARMOR TO SURVIVE THE REALITY OF EVERYDAY LIFE."
+             SLUT™/ Desire
           </blockquote>
           <p className="text-white/40 text-sm leading-relaxed max-w-lg mx-auto">
-            Born from the streets, refined for the bold. SLUT Clothing is more
-            than a brand — it's a statement. Every piece challenges norms and
-            celebrates authentic self-expression.
+            DESIRE IS NOT A CRIME
+              Desire was never the problem. Fear was.
+   
+              We stopped asking
           </p>
           <Link
             to="/about"
