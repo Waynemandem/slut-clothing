@@ -80,9 +80,12 @@ export default function Navbar(): JSX.Element {
             className={`text-xl font-black tracking-[0.3em] uppercase transition-colors duration-300 text-black`}
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
           >
-            <img 
-            src="/logo.svg" 
-            alt="SLUT" />
+            <img
+              src="/logo.svg"
+              alt="SLUT"
+              className="h-10 w-auto"
+            />
+            
           </Link>
 
           {/* ── Desktop nav links ── */}
