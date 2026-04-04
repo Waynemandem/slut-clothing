@@ -24,7 +24,7 @@ export default function App(): JSX.Element {
         <Routes>
           <Route path="/"      element={<Layout><Home /></Layout>} />
           <Route path="/shop"  element={<Layout><Shop /></Layout>} />
-          <Route path="/product/:slug" element={<ProductDetail />} />
+          <Route path="/product/:slug" element={<Layout><ProductDetail /></Layout>} />
           <Route path="/about" element={<Layout><About /></Layout>} />
 
           {/* Add routes here as pages are built:
