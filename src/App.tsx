@@ -6,6 +6,7 @@ import { AppProvider } from "./context/AppContext";
 import Layout from "./layouts/Layout";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
+import ProductDetail from "./pages/ProductDetail";
 import About from "./pages/About";
 import { JSX } from "react";
 
@@ -23,6 +24,7 @@ export default function App(): JSX.Element {
         <Routes>
           <Route path="/"      element={<Layout><Home /></Layout>} />
           <Route path="/shop"  element={<Layout><Shop /></Layout>} />
+          <Route path="/product/:slug" element={<ProductDetail />} />
           <Route path="/about" element={<Layout><About /></Layout>} />
 
           {/* Add routes here as pages are built:
