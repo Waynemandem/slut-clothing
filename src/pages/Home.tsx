@@ -172,7 +172,7 @@ export default function Home(): JSX.Element {
 
       {/* ── 6. Newsletter ── */}
       <section className="bg-neutral-50 py-20 px-6 text-center">
-        <p className="text-[10px] tracking-[0.45em] uppercase text-neutral-400 mb-3">
+        <p className="text-[20px] font-black tracking-[0.45em] uppercase text-neutral-400 mb-3">
           Stay Bold
         </p>
         <h2
@@ -191,7 +191,7 @@ export default function Home(): JSX.Element {
         >
           <input
             type="email"
-            placeholder="your@email.com"
+            placeholder="email"
             className="flex-1 border border-black px-4 py-3 text-sm focus:outline-none rounded-none bg-transparent"
           />
           <Button className="rounded-none bg-black text-white hover:bg-neutral-800 text-[10px] font-bold tracking-widest uppercase px-6">

@@ -99,7 +99,7 @@ export default function Footer(): JSX.Element {
               {COMPANY_LINKS.map(item => (
                 <li key={item}>
                   <Link
-                    to="/"
+                    to="/about"
                     className="text-sm text-neutral-500 hover:text-white transition-colors"
                   >
                     {item}
@@ -113,7 +113,7 @@ export default function Footer(): JSX.Element {
         {/* ── Legal row ── */}
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-3">
           <p className="text-neutral-600 text-[10px] tracking-widest uppercase">
-            © {new Date().getFullYear()} SLUT Clothing. All rights reserved.
+            © {new Date().getFullYear()} SLUT™. All rights reserved.
           </p>
           <div className="flex gap-6">
             {['Privacy', 'Terms', 'Cookies'].map(item => (

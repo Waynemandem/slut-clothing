@@ -71,10 +71,10 @@ export default function About(): JSX.Element {
         </div>
         <div className="space-y-5 text-neutral-500 text-sm leading-relaxed">
           <p>
-            SLUT Clothing was not built in a boardroom. It was built in the space between shame and freedom — that exact moment when you decide the opinion of the world is worth less than the truth of yourself.
+            Own your body. Own your Power in Desire 
           </p>
           <p>
-            Desire was never the problem. Fear was. We were taught to be small, to apologise for our wants, to dress the part assigned to us. We rejected that assignment.
+            Own your Urge <br /> Want More. Take More.
           </p>
           <p>
             SS25 is our loudest statement yet. These are clothes for people who stopped asking for permission.
