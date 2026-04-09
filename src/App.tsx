@@ -9,6 +9,8 @@ import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import About from "./pages/About";
 import { JSX } from "react";
+import IntroAnimation from "./components/IntroAnimation";
+import { useIntroAnimation } from "./hooks/useIntroAnimation";
 
 // Uncomment as you build each page:
 // import ProductDetail from "./pages/ProductDetail";
@@ -18,7 +20,11 @@ import { JSX } from "react";
 // import Admin         from "./pages/Admin";
 
 export default function App(): JSX.Element {
+
+  const { showIntro, handleComplete } = useIntroAnimation();
   return (
+    <>
+    {showIntro && <IntroAnimation onComplete={handleComplete} />}
     <AppProvider>
       <BrowserRouter>
         <Routes>
@@ -37,5 +43,6 @@ export default function App(): JSX.Element {
         </Routes>
       </BrowserRouter>
     </AppProvider>
+    </>
   );
 }
