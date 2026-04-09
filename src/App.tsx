@@ -11,6 +11,9 @@ import About from "./pages/About";
 import { JSX } from "react";
 import IntroAnimation from "./components/IntroAnimation";
 import { useIntroAnimation } from "./hooks/useIntroAnimation";
+import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
+import Admin from "./pages/Admin";
 
 // Uncomment as you build each page:
 // import ProductDetail from "./pages/ProductDetail";
@@ -24,8 +27,8 @@ export default function App(): JSX.Element {
   const { showIntro, handleComplete } = useIntroAnimation();
   return (
     <>
-    {showIntro && <IntroAnimation onComplete={handleComplete} />}
     <AppProvider>
+       {showIntro && <IntroAnimation onComplete={handleComplete} />}
       <BrowserRouter>
         <Routes>
           <Route path="/"      element={<Layout><Home /></Layout>} />
