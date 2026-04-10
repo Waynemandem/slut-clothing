@@ -1,6 +1,4 @@
 // src/App.tsx
-// Root of the application. Declares all routes and wraps everything in AppProvider.
-// TO ADD A NEW PAGE: create in src/pages/, import here, add a <Route> inside <Routes>
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
 import Layout from "./layouts/Layout";
@@ -8,47 +6,39 @@ import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import About from "./pages/About";
-import { JSX } from "react";
-import IntroAnimation from "./components/IntroAnimation";
-import { useIntroAnimation } from "./hooks/useIntroAnimation";
-import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
+import NotFound from "./pages/NotFound";
+import IntroAnimation from "./components/IntroAnimation";
+import { useIntroAnimation } from "./hooks/useIntroAnimation";
+import { type JSX } from "react";
 
-// Uncomment as you build each page:
-// import ProductDetail from "./pages/ProductDetail";
-// import Cart          from "./pages/Cart";
-// import Login         from "./pages/Login";
-// import Account       from "./pages/Account";
-// import Admin         from "./pages/Admin";
-
-export default function App(): JSX.Element {
-
+// AppInner sits INSIDE AppProvider so hooks like useIntroAnimation
+// can safely access context. BrowserRouter also lives here.
+function AppInner(): JSX.Element {
   const { showIntro, handleComplete } = useIntroAnimation();
   return (
     <>
-    <AppProvider>
-       {showIntro && <IntroAnimation onComplete={handleComplete} />}
+      {showIntro && <IntroAnimation onComplete={handleComplete} />}
       <BrowserRouter>
         <Routes>
-          <Route path="/"      element={<Layout><Home /></Layout>} />
-          <Route path="/shop"  element={<Layout><Shop /></Layout>} />
+          <Route path="/"              element={<Layout><Home /></Layout>} />
+          <Route path="/shop"          element={<Layout><Shop /></Layout>} />
           <Route path="/product/:slug" element={<Layout><ProductDetail /></Layout>} />
-          <Route path="/about" element={<Layout><About /></Layout>} />
-          <Route path="/login" element={<Login  />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="*"      element={<NotFound />} />
-
-          {/* Add routes here as pages are built:
-          <Route path="/product/:id" element={<Layout><ProductDetail /></Layout>} />
-          <Route path="/cart"        element={<Layout><Cart /></Layout>} />
-          <Route path="/login"       element={<Layout><Login /></Layout>} />
-          <Route path="/account"     element={<Layout><Account /></Layout>} />
-          <Route path="/admin"       element={<Layout><Admin /></Layout>} />
-          */}
+          <Route path="/about"         element={<Layout><About /></Layout>} />
+          <Route path="/login"         element={<Login />} />
+          <Route path="/admin"         element={<Admin />} />
+          <Route path="*"              element={<NotFound />} />
         </Routes>
       </BrowserRouter>
-    </AppProvider>
     </>
+  );
+}
+
+export default function App(): JSX.Element {
+  return (
+    <AppProvider>
+      <AppInner />
+    </AppProvider>
   );
 }

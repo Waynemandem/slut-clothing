@@ -118,9 +118,9 @@ export default function Navbar(): JSX.Element {
 
             {/* Account (desktop) */}
             <Link
-              to={user ? "/account" : "/login"}
+              to={user ? "/dashboard" : "/login"}
               className={`hidden md:flex transition-colors duration-200 ${hoverColor}`}
-              aria-label={user ? "Account" : "Login"}
+              aria-label={user ? "Dashboard" : "Login"}
             >
               <User size={18} />
             </Link>
@@ -203,7 +203,7 @@ export default function Navbar(): JSX.Element {
                   {/* Mobile menu footer */}
                   <div className="px-6 py-6 border-t border-white/10 flex gap-3">
                     <Link
-                      to={user ? "/account" : "/login"}
+                      to={user ? "/dashboard" : "/login"}
                       onClick={() => setMobileOpen(false)}
                       className="flex-1"
                     >
@@ -212,7 +212,7 @@ export default function Navbar(): JSX.Element {
                         size="sm"
                         className="w-full border-white/30 text-white bg-transparent hover:bg-white hover:text-black rounded-none text-[10px] tracking-widest uppercase"
                       >
-                        {user ? "Account" : "Login"}
+                        {user ? "Dashboard" : "Login"}
                       </Button>
                     </Link>
                     <Button
