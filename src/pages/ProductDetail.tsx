@@ -7,7 +7,7 @@ import { useState, useEffect, JSX } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ChevronRight, Minus, Plus, ShoppingBag, ArrowLeft, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { fetchProductBySlug, fetchProducts } from "@/services/products";
+import { fetchProductBySlug, fetchProducts } from "@/services/productServices";
 import { useApp } from "@/context/AppContext";
 import type { Product } from "@/types";
 

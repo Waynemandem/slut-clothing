@@ -9,7 +9,7 @@ import {
   fetchProducts,
   fetchFeaturedProducts,
   fetchProductBySlug,
-} from '@/services/products';
+} from '@/services/productServices';
 import type { Product, ProductFilters } from '@/types';
 
 // ── useProducts — filtered product list ──────────────────────────────────────

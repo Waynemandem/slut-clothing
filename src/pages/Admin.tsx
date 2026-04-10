@@ -12,7 +12,7 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
-} from "@/services/productService";
+} from "@/services/productServices";
 import type { Product } from "@/types";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

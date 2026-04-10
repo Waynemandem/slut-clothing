@@ -3,7 +3,7 @@
 // All Supabase queries related to products live here.
 //
 // ARCHITECTURE RULE:
-//   Pages call these functions. Components receive data as props.
+//   Pages call these functions. Components receive data as props.3
 //   Nothing outside this file should import `supabase` directly for products.
 //
 // PATTERN:
