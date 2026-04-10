@@ -26,7 +26,7 @@ export default function Login(): JSX.Element {
 
   // Redirect if already logged in
   useEffect(() => {
-    if (user) navigate("/account", { replace: true });
+    if (user) navigate("/", { replace: true });
   }, [user, navigate]);
 
   const clearMessages = () => {
