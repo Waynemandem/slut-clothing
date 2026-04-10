@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import IntroAnimation from "./components/IntroAnimation";
 import { useIntroAnimation } from "./hooks/useIntroAnimation";
 import { type JSX } from "react";
+import Account from "./pages/Account";
 
 // AppInner sits INSIDE AppProvider so hooks like useIntroAnimation
 // can safely access context. BrowserRouter also lives here.
@@ -29,6 +30,7 @@ function AppInner(): JSX.Element {
           <Route path="/login"         element={<Login />} />
           <Route path="/admin"         element={<Admin />} />
           <Route path="*"              element={<NotFound />} />
+          <Route path="/account"       element={<Account />} />
         </Routes>
       </BrowserRouter>
     </>
