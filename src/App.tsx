@@ -14,6 +14,7 @@ import { useIntroAnimation } from "./hooks/useIntroAnimation";
 import { type JSX } from "react";
 import Account from "./pages/Account";
 import Cart from "./pages/Cart";
+import OrderConfirmation from "./pages/OrderConfirmation";
 
 // AppInner sits INSIDE AppProvider so hooks like useIntroAnimation
 // can safely access context. BrowserRouter also lives here.
@@ -33,6 +34,7 @@ function AppInner(): JSX.Element {
           <Route path="*"              element={<NotFound />} />
           <Route path="/account"       element={<Account />} />
           <Route path="/cart"          element={<Layout><Cart /></Layout>} />
+          <Route path="/order-confirmation" element={<Layout><OrderConfirmation /></Layout>} />
         </Routes>
       </BrowserRouter>
     </>

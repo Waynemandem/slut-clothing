@@ -7,6 +7,8 @@ import { type JSX } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Minus, Plus, X, ShoppingBag, ArrowRight, ArrowLeft } from "lucide-react";
 import { useApp } from "@/context/AppContext";
+import { useState } from "react";
+import CheckoutForm from "@/components/CheckoutForm";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function formatPrice(kobo: number): string {
@@ -37,6 +39,7 @@ function EmptyCart(): JSX.Element {
 export default function Cart(): JSX.Element {
   const navigate = useNavigate();
   const { cart, cartTotal, updateQuantity, removeFromCart } = useApp();
+  const [ checkoutOpen, setCheckoutOpen ] = useState(false);
 
   if (cart.length === 0) return <EmptyCart />;
 
@@ -238,7 +241,7 @@ export default function Cart(): JSX.Element {
 
               {/* Checkout CTA */}
               <button
-                onClick={() => alert("Stripe coming soon!")}
+                onClick={() => setCheckoutOpen(true)}
                 className="w-full h-12 bg-black text-white text-xs font-bold tracking-widest uppercase flex items-center justify-center gap-2 hover:bg-neutral-800 transition-colors mb-3"
               >
                 Checkout <ArrowRight size={13} />
@@ -264,6 +267,7 @@ export default function Cart(): JSX.Element {
                     {text}
                   </p>
                 ))}
+                {checkoutOpen && <CheckoutForm onClose={() => setCheckoutOpen(false)} />}
               </div>
             </div>
           </div>
