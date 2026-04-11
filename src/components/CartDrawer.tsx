@@ -122,7 +122,9 @@ export default function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
             )}
 
             {/* Checkout CTA */}
-            <Link to="/cart" onClick={close}>
+            <Link 
+            to="/cart" 
+            onClick={() => onOpenChange(false)}>
               <Button className="w-full rounded-none bg-black text-white hover:bg-neutral-800 h-12 text-xs font-bold tracking-[0.2em] uppercase">
                 Checkout <ArrowRight size={14} className="ml-2" />
               </Button>
@@ -156,7 +158,7 @@ function CartLineItem({ item, onRemove, onUpdateQty }: CartLineItemProps) {
   return (
     <li className="flex gap-4 px-6 py-5">
       {/* Thumbnail */}
-      <Link to={`/product/${item.id}`} className="flex-shrink-0">
+      <Link to={`/product/${(item as any).slug ?? item.id}`} className="flex-shrink-0">
         <div className="w-20 h-24 bg-neutral-100 overflow-hidden">
           <img
             src={image}
@@ -220,7 +222,7 @@ function CartLineItem({ item, onRemove, onUpdateQty }: CartLineItemProps) {
 
           {/* Line total */}
           <span className="text-sm font-semibold">
-            ${(item.price * item.quantity).toFixed(2)}
+            ${((item.price * item.quantity) / 100) .toFixed(2)}
           </span>
         </div>
       </div>
