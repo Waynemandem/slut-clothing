@@ -155,15 +155,13 @@ export default function Home(): JSX.Element {
           >
              SLUT™/ Desire
           </blockquote>
-          <p className="text-white/40 text-sm leading-relaxed max-w-lg mx-auto">
+          <p className="text-white/70 text-sm leading-relaxed max-w-lg mx-auto">
             DESIRE IS NOT A CRIME
-            <br />  Desire was never the problem. Fear was.
-   
-              We stopped asking
+            <br />  Desire was never the problem. Fear was. We stopped asking.   
           </p>
           <Link
             to="/about"
-            className="inline-flex items-center gap-2 mt-8 text-[10px] font-bold tracking-widest uppercase text-white/40 hover:text-white transition-colors"
+            className="inline-flex items-center gap-2 mt-8 text-[10px] font-bold tracking-widest uppercase text-white/50 hover:text-white transition-colors"
           >
             Read Our Story <ArrowRight size={13} />
           </Link>
