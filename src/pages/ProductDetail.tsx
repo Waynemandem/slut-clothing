@@ -12,8 +12,8 @@ import { useApp } from "@/context/AppContext";
 import type { Product } from "@/types";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-function formatPrice(pence: number): string {
-  return `$${(pence / 100).toFixed(2)}`;
+function formatPrice(kobo: number): string {
+  return `₦${(kobo / 100).toLocaleString("en-NG", { minimumFractionDigits: 2 })}`;
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────────

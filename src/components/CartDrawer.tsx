@@ -89,7 +89,7 @@ export default function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between text-neutral-500">
                 <span>Subtotal</span>
-                <span>${cartTotal.toFixed(2)}</span>
+                <span>₦{(cartTotal / 100).toLocaleString("en-NG", { minimumFractionDigits: 2 })}</span>
               </div>
               <div className="flex justify-between text-neutral-500">
                 <span>Shipping</span>
@@ -100,7 +100,7 @@ export default function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
               <Separator className="my-2" />
               <div className="flex justify-between font-bold text-base">
                 <span>Total</span>
-                <span>${cartTotal.toFixed(2)}</span>
+                <span>₦{(cartTotal / 100).toLocaleString("en-NG", { minimumFractionDigits: 2 })}</span>
               </div>
             </div>
 
@@ -222,7 +222,8 @@ function CartLineItem({ item, onRemove, onUpdateQty }: CartLineItemProps) {
 
           {/* Line total */}
           <span className="text-sm font-semibold">
-            ${((item.price * item.quantity) / 100) .toFixed(2)}
+            ₦{((item.price * item.quantity) / 100).toLocaleString("en-NG",
+               { minimumFractionDigits: 2 })}
           </span>
         </div>
       </div>

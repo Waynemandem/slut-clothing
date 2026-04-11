@@ -20,11 +20,8 @@ export function cn(...inputs: ClassValue[]): string {
  * Format a number as a dollar price string.
  * @example formatPrice(48) → "$48.00"
  */
-export function formatPrice(price: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(price);
+export function formatPrice(kobo: number): string {
+  return `₦${(kobo / 100).toLocaleString("en-NG", { minimumFractionDigits: 2 })}`;
 }
 
 /**

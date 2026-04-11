@@ -9,10 +9,9 @@ import { Minus, Plus, X, ShoppingBag, ArrowRight, ArrowLeft } from "lucide-react
 import { useApp } from "@/context/AppContext";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-function formatPrice(pence: number): string {
-  return `$${(pence / 100).toFixed(2)}`;
+function formatPrice(kobo: number): string {
+  return `₦${(kobo / 100).toLocaleString("en-NG", { minimumFractionDigits: 2 })}`;
 }
-
 // ── Empty state ───────────────────────────────────────────────────────────────
 function EmptyCart(): JSX.Element {
   return (
