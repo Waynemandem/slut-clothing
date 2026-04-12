@@ -218,4 +218,79 @@ export default function Account(): JSX.Element {
                       <span className="text-sm font-bold">{formatPrice(order.total)}</span>
                       {/* Status badge */}
                       <span
-                        className={`text-[9px] font-bold tracking-widest uppercase px-2 py-1
+                        className={`text-[9px] font-bold tracking-widest uppercase px-2 py-1 ${
+                          STATUS_STYLES[order.status] ?? "bg-neutral-100 text-neutral-500"
+                        }`}
+                      >
+                        {order.status}
+                      </span>
+                      {/* Expand chevron */}
+                      <ChevronRight
+                        size={14}
+                        className={`text-neutral-300 transition-transform duration-200 ${
+                          expandedOrder === order.id ? "rotate-90" : ""
+                        }`}
+                      />
+                    </div>
+                  </button>
+
+                  {/* Expanded order items */}
+                  {expandedOrder === order.id && (
+                    <div className="px-6 pb-5 bg-neutral-50 border-t border-neutral-100">
+                      <div className="pt-4 space-y-3">
+                        {order.items.map((item, i) => (
+                          <div
+                            key={`${item.id}-${item.size}-${i}`}
+                            className="flex items-center gap-3"
+                          >
+                            {/* Thumbnail */}
+                            <div className="w-12 h-14 bg-neutral-200 overflow-hidden flex-shrink-0">
+                              {item.images?.[0] && (
+                                <img
+                                  src={item.images[0]}
+                                  alt={item.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              )}
+                            </div>
+                            {/* Info */}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate">{item.name}</p>
+                              <p className="text-[11px] text-neutral-400 mt-0.5">
+                                Size: {item.size} · Qty: {item.quantity}
+                              </p>
+                            </div>
+                            {/* Line total */}
+                            <span className="text-sm font-medium flex-shrink-0">
+                              {formatPrice(item.price * item.quantity)}
+                            </span>
+                          </div>
+                        ))}
+
+                        {/* Order total */}
+                        <div className="border-t border-neutral-200 pt-3 flex justify-between text-sm font-bold">
+                          <span>Total Paid</span>
+                          <span>{formatPrice(order.total)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ── Sign out ── */}
+        <button
+          onClick={handleSignOut}
+          className="w-full flex items-center justify-center gap-2 h-11 border border-neutral-300 text-xs font-bold tracking-widest uppercase text-neutral-600 hover:border-black hover:text-black transition-colors bg-white"
+        >
+          <LogOut size={13} />
+          Sign Out
+        </button>
+
+      </div>
+    </div>
+  );
+}
