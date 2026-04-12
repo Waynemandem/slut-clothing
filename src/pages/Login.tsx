@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useApp } from "@/context/AppContext";
+import { toast } from "sonner";
 
 type Mode = "signin" | "signup" | "reset";
 
@@ -65,7 +66,8 @@ export default function Login(): JSX.Element {
       if (error) {
         setError(error.message);
       } else {
-        setSuccess("Account created! Check your email to confirm your address.");
+        setSuccess("Account created! Check your email to confirm.");
+        toast.success("Account created!");
       }
       return;
     }
@@ -81,6 +83,7 @@ export default function Login(): JSX.Element {
         setError(error.message);
       } else {
         setSuccess("Reset link sent. Check your email.");
+        toast.success("Reset link sent");
       }
       return;
     }
@@ -99,6 +102,7 @@ export default function Login(): JSX.Element {
           ? "Incorrect email or password."
           : error.message
       );
+      toast.error("Incorrect email or password");
     }
     // successful signin triggers onAuthStateChange → AppContext updates user → useEffect above redirects
   };
