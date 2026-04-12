@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { JSX } from 'react';
+import SEO from '@/components/SEO';
 
 type Value = {
   number: string;
@@ -34,6 +35,12 @@ const values: Value[] = [
 
 export default function About(): JSX.Element {
   return (
+    <>
+      <SEO
+          title="About"
+          description="Desire is not a crime. The story behind SLUT Clothing."
+          url="/about"
+      />
     <div className="bg-white">
 
       {/* ── 1. Hero ── */}
@@ -171,5 +178,6 @@ export default function About(): JSX.Element {
       </section>
 
     </div>
+    </>
   );
 }

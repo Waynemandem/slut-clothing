@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { useApp } from "@/context/AppContext";
 import { toast } from "sonner";
 import type { CartItem } from "@/types";
+import SEO from "@/components/SEO";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface Order {
@@ -78,6 +79,9 @@ export default function Account(): JSX.Element {
   });
 
   return (
+    <>
+      <SEO title="My Account" />
+    
     <div className="min-h-screen bg-neutral-50">
       {/* ── Header ── */}
       <div className="bg-black text-white px-6 md:px-10 py-10">
@@ -292,5 +296,6 @@ export default function Account(): JSX.Element {
 
       </div>
     </div>
+    </>
   );
 }
