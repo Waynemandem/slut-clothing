@@ -208,22 +208,28 @@ export async function createProduct(
   return { data, error: null };
 }
 
-/** Admin only: update a product row. */
+// ✅ Fixed — use .select().eq() after update to fetch the row separately
 export async function updateProduct(
   id: string,
   updates: Partial<Omit<Product, 'id' | 'created_at'>>
 ): Promise<ServiceResult<Product>> {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('products')
     .update(updates)
-    .eq('id', id)
-    .select()
-    .single();
+    .eq('id', id);
 
   if (error) return { data: null, error: error.message };
-  return { data, error: null };
-}
 
+  // Fetch the updated row separately
+  const { data, error: fetchError } = await supabase
+    .from('products')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (fetchError) return { data: null, error: fetchError.message };
+  return { data: data as Product, error: null };
+}
 /** Admin only: delete a product row. */
 export async function deleteProduct(id: string): Promise<ServiceResult<null>> {
   const { error } = await supabase.from('products').delete().eq('id', id);
