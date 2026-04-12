@@ -8,6 +8,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { LogOut, ShoppingBag, User, Shield, ChevronRight, Package } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useApp } from "@/context/AppContext";
+import { toast } from "sonner";
 
 export default function Account(): JSX.Element {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ export default function Account(): JSX.Element {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
+    toast("Signed out");
     navigate("/", { replace: true });
   };
 
