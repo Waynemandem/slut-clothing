@@ -15,6 +15,7 @@ import {
 import type { User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import type { CartItem, Product } from '@/types';
+import { toast } from "sonner";
 
 // ── Context shape ─────────────────────────────────────────────────────────────
 
@@ -105,12 +106,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
           item => item.id === product.id && item.size === size
         );
         if (existing) {
+          toast.success(`Updated quantity in bag`);
           return prev.map(item =>
             item.id === product.id && item.size === size
               ? { ...item, quantity: item.quantity + quantity }
               : item
           );
         }
+        toast.success(`Added to bag`, {
+          description: `${product.name} — ${size}`,
+          });
         return [
           ...prev,
           {
@@ -131,6 +136,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const removeFromCart = useCallback((id: string, size: string) => {
     setCart(prev => prev.filter(item => !(item.id === id && item.size === size)));
+    toast("Removed from bag");
   }, []);
 
   const updateQuantity = useCallback(

@@ -15,13 +15,25 @@ import { type JSX } from "react";
 import Account from "./pages/Account";
 import Cart from "./pages/Cart";
 import OrderConfirmation from "./pages/OrderConfirmation";
-
+import { Toaster } from "sonner"
+ 
 // AppInner sits INSIDE AppProvider so hooks like useIntroAnimation
 // can safely access context. BrowserRouter also lives here.
 function AppInner(): JSX.Element {
   const { showIntro, handleComplete } = useIntroAnimation();
   return (
     <>
+    <Toaster
+  position="bottom-right"
+  toastOptions={{
+    style: {
+      borderRadius: "0",
+      fontFamily: "inherit",
+      fontSize: "12px",
+      letterSpacing: "0.05em",
+          },
+          }}
+          />
       {showIntro && <IntroAnimation onComplete={handleComplete} />}
       <BrowserRouter>
         <Routes>
