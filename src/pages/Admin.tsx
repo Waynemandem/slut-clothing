@@ -14,7 +14,8 @@ import {
   deleteProduct,
 } from "@/services/productServices";
 import type { Product } from "@/types";
-
+import { toast } from "sonner";
+ 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const formatPrice = (pence: number) => `$${(pence / 100).toFixed(2)}`;
 
@@ -115,6 +116,7 @@ function ProductFormModal({
     if (result.error) {
       setError(result.error);
     } else {
+      toast.success(product ? "Product updated" : "Product created");  
       onSave();
       onClose();
     }
@@ -284,6 +286,7 @@ function DeleteConfirmModal({
   const handleDelete = async () => {
     setLoading(true);
     await deleteProduct(product.id);
+    toast.success("Product deleted");
     setLoading(false);
     onConfirm();
     onClose();
