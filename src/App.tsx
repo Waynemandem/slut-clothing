@@ -16,6 +16,7 @@ import Account from "./pages/Account";
 import Cart from "./pages/Cart";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import { Toaster } from "sonner"
+import { HelmetProvider } from "react-helmet-async";
  
 // AppInner sits INSIDE AppProvider so hooks like useIntroAnimation
 // can safely access context. BrowserRouter also lives here.
@@ -55,8 +56,10 @@ function AppInner(): JSX.Element {
 
 export default function App(): JSX.Element {
   return (
+   <HelmetProvider> 
     <AppProvider>
       <AppInner />
     </AppProvider>
+   </HelmetProvider> 
   );
 }
