@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { Loader2, ArrowRight, X } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface ShippingDetails {
@@ -170,6 +171,7 @@ export default function CheckoutForm({ onClose }: CheckoutFormProps): JSX.Elemen
       handler.openIframe();
     } catch (err) {
       console.error("Paystack error:", err);
+      toast.error("Payment failed. Please try again.");
       setLoading(false);
     }
   }, [form, total, cart, clearCart, navigate]);
