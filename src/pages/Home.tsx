@@ -11,6 +11,7 @@ import HeroSection from '@/components/HeroSection';
 import ProductGrid from '@/components/ProductGrid';
 import { useFeaturedProducts } from '@/hooks/useProducts';
 import { FormEvent, JSX } from 'react';
+import SEO from "@/components/SEO";
 
 type Panel = {
   img: string;
@@ -43,6 +44,12 @@ export default function Home(): JSX.Element {
 
   
   return (
+    <>
+    <SEO
+    title="Home"
+    description="Unapologetically bold streetwear. SS 2025 Collection - Wear Your Truth"
+    url='/'
+    />
     <div className="bg-white">
 
       {/* ── 1. Hero ── */}
@@ -199,5 +206,6 @@ export default function Home(): JSX.Element {
       </section>
 
     </div>
+    </>
   );
 }

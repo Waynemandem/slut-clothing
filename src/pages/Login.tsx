@@ -9,6 +9,7 @@ import { Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useApp } from "@/context/AppContext";
 import { toast } from "sonner";
+import SEO from "@/components/SEO";
 
 type Mode = "signin" | "signup" | "reset";
 
@@ -124,6 +125,11 @@ export default function Login(): JSX.Element {
   };
 
   return (
+    <>
+    <SEO
+    title="Login" 
+    url="/login"
+    />
     <div className="min-h-screen bg-white flex">
       {/* ── Left panel — branding (desktop only) ── */}
       <div className="hidden lg:flex w-1/2 bg-black flex-col justify-between p-16 relative overflow-hidden">
@@ -310,5 +316,6 @@ export default function Login(): JSX.Element {
         </div>
       </div>
     </div>
+    </>
   );
 }

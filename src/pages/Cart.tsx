@@ -9,6 +9,7 @@ import { Minus, Plus, X, ShoppingBag, ArrowRight, ArrowLeft } from "lucide-react
 import { useApp } from "@/context/AppContext";
 import { useState } from "react";
 import CheckoutForm from "@/components/CheckoutForm";
+import SEO from "@/components/SEO";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function formatPrice(kobo: number): string {
@@ -47,6 +48,8 @@ export default function Cart(): JSX.Element {
   const total = cartTotal + shipping;
 
   return (
+    <>
+    <SEO title="Your Bag" url="/cart" />
     <div className="min-h-screen bg-white">
       <div className="max-w-screen-xl mx-auto px-6 md:px-10 py-10">
 
@@ -274,5 +277,6 @@ export default function Cart(): JSX.Element {
         </div>
       </div>
     </div>
+    </>
   );
 }
