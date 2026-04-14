@@ -1,11 +1,17 @@
 // src/pages/NotFound.tsx
 import { useNavigate } from "react-router-dom";
 import { type JSX } from "react";
+import SEO from "@/components/SEO"
 
 export default function NotFound(): JSX.Element {
   const navigate = useNavigate();
 
   return (
+    <>
+    <SEO
+    title="404 - Page Not Found" 
+    url=""
+    />
     <div className="min-h-screen bg-black flex flex-col items-center justify-center px-6 relative overflow-hidden">
       {/* Background 404 */}
       <span
@@ -61,5 +67,6 @@ export default function NotFound(): JSX.Element {
         <span className="font-mono text-[9px] tracking-widest text-neutral-700 uppercase">SS/2025</span>
       </div>
     </div>
+    </>
   );
 }

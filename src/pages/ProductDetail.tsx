@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { fetchProductBySlug, fetchProducts } from "@/services/productServices";
 import { useApp } from "@/context/AppContext";
 import type { Product } from "@/types";
+import SEO from "@/components/SEO";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function formatPrice(kobo: number): string {
@@ -300,6 +301,14 @@ export default function ProductDetail(): JSX.Element {
 
   // ── Render ──────────────────────────────────────────────────────────────
   return (
+    <>
+    <SEO 
+    title={product.name}
+    description={product.description ?? `Shop ${product.name} from SLUT Clothing`}
+    image={product.images[0]}
+    url={`/product/${product.slug}`}
+    type="product"
+    />
     <div className="min-h-screen bg-white">
       <div className="max-w-screen-xl mx-auto px-6 md:px-10 py-10">
 
@@ -465,5 +474,6 @@ export default function ProductDetail(): JSX.Element {
         <RelatedProducts currentId={product.id} category={product.category} />
       </div>
     </div>
+    </>
   );
 }

@@ -15,6 +15,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 import { useDebounce } from "@/hooks/useDebounce";
 import type { ProductFilters, SortOption } from "@/types";
+import SEO from "@/components/SEO"
 
 const SORT_LABELS: Record<SortOption, string> = {
   newest:     "Newest",
@@ -81,6 +82,12 @@ const activeFilterCount = [
   const isLoading = productsLoading;
 
   return (
+    <>
+    <SEO
+        title="Shop"
+        description="Browse the full SLUT Clothing collection. T-shirts, hoodies, accessories."
+        url="/shop"
+      />
     <div className="min-h-screen bg-white">
       {/* ... (rest of the component is the same until the Sheet) ... */}
       {/* ── Search + mobile filter bar ───────────────────────────────────── */}
@@ -200,6 +207,7 @@ const activeFilterCount = [
         </div>
       </div>
     </div>
+    </>
   );
 }
 
