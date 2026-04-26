@@ -1,23 +1,15 @@
 // src/pages/Admin.tsx
-// ─────────────────────────────────────────────────────────────────────────────
-// Admin dashboard — add, edit, delete products.
-// Protected: redirects to /login if not authenticated or not admin.
-// ─────────────────────────────────────────────────────────────────────────────
 import { useState, useEffect, useCallback, type JSX } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, Pencil, Trash2, X, Loader2, Check, PackageSearch } from "lucide-react";
 import { useApp } from "@/context/AppContext";
-import {
-  fetchProducts,
-  createProduct,
-  updateProduct,
-  deleteProduct,
-} from "@/services/productServices";
-import type { Product } from "@/types";
+import { fetchProducts, createProduct, updateProduct, deleteProduct } from "@/services/productService";
 import { toast } from "sonner";
- 
+import type { Product } from "@/types";
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
-const formatPrice = (pence: number) => `$${(pence / 100).toFixed(2)}`;
+const formatPrice = (kobo: number) =>
+  `₦${(kobo / 100).toLocaleString("en-NG", { minimumFractionDigits: 2 })}`;
 
 const EMPTY_FORM = {
   name: "",
@@ -36,13 +28,52 @@ const EMPTY_FORM = {
 
 type FormData = typeof EMPTY_FORM;
 
+// ── Field — defined OUTSIDE modal to prevent keyboard dismiss on mobile ────────
+interface FieldProps {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: string;
+  placeholder?: string;
+  hint?: string;
+  half?: boolean;
+}
+
+function Field({ label, value, onChange, type = "text", placeholder, hint, half }: FieldProps) {
+  return (
+    <div className={half ? "flex-1" : "w-full"}>
+      <label className="block text-[11px] font-bold tracking-widest uppercase mb-1.5">
+        {label}
+      </label>
+      {type === "textarea" ? (
+        <textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          rows={3}
+          className="w-full border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:border-black transition-colors resize-none"
+        />
+      ) : (
+        <input
+          type={type}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className="w-full h-10 border border-neutral-300 px-3 text-sm focus:outline-none focus:border-black transition-colors"
+        />
+      )}
+      {hint && <p className="text-[11px] text-neutral-400 mt-1">{hint}</p>}
+    </div>
+  );
+}
+
 // ── Product Form Modal ────────────────────────────────────────────────────────
 function ProductFormModal({
   product,
   onClose,
   onSave,
 }: {
-  product: Product | null; // null = creating new
+  product: Product | null;
   onClose: () => void;
   onSave: () => void;
 }) {
@@ -70,7 +101,6 @@ function ProductFormModal({
   const set = (key: keyof FormData, value: string | boolean) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
-  // Auto-generate slug from name
   const handleNameChange = (name: string) => {
     set("name", name);
     if (!product) {
@@ -116,49 +146,11 @@ function ProductFormModal({
     if (result.error) {
       setError(result.error);
     } else {
-      toast.success(product ? "Product updated" : "Product created");  
+      toast.success(product ? "Product updated" : "Product created");
       onSave();
       onClose();
     }
   };
-
-  const Field = ({
-    label,
-    name,
-    type = "text",
-    placeholder,
-    hint,
-  }: {
-    label: string;
-    name: keyof FormData;
-    type?: string;
-    placeholder?: string;
-    hint?: string;
-  }) => (
-    <div>
-      <label className="block text-[11px] font-bold tracking-widest uppercase mb-1.5">
-        {label}
-      </label>
-      {type === "textarea" ? (
-        <textarea
-          value={form[name] as string}
-          onChange={(e) => set(name, e.target.value)}
-          placeholder={placeholder}
-          rows={3}
-          className="w-full border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:border-black transition-colors resize-none"
-        />
-      ) : (
-        <input
-          type={type}
-          value={form[name] as string}
-          onChange={(e) => set(name, e.target.value)}
-          placeholder={placeholder}
-          className="w-full h-10 border border-neutral-300 px-3 text-sm focus:outline-none focus:border-black transition-colors"
-        />
-      )}
-      {hint && <p className="text-[11px] text-neutral-400 mt-1">{hint}</p>}
-    </div>
-  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -183,34 +175,60 @@ function ProductFormModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="sm:col-span-2">
-              <Field label="Product Name" name="name" placeholder="SLUT Core Tee Black" />
+              <Field
+                label="Product Name"
+                value={form.name}
+                onChange={handleNameChange}
+                placeholder="SLUT Core Tee Black"
+              />
             </div>
             <Field
               label="Slug"
-              name="slug"
+              value={form.slug}
+              onChange={(val) => set("slug", val)}
               placeholder="slut-core-tee-black"
               hint="Auto-generated from name. Used in URL."
             />
-            <Field label="Category" name="category" placeholder="t-shirts" />
-            <Field label="Price ($)" name="price" type="number" placeholder="49.99" />
             <Field
-              label="Compare Price ($)"
-              name="compare_price"
+              label="Category"
+              value={form.category}
+              onChange={(val) => set("category", val)}
+              placeholder="t-shirts"
+            />
+            <Field
+              label="Price (₦)"
+              value={form.price}
+              onChange={(val) => set("price", val)}
               type="number"
-              placeholder="69.99 (optional)"
+              placeholder="15000"
+            />
+            <Field
+              label="Compare Price (₦)"
+              value={form.compare_price}
+              onChange={(val) => set("compare_price", val)}
+              type="number"
+              placeholder="20000 (optional)"
               hint="Shows as strikethrough when set."
             />
-            <Field label="Stock" name="stock" type="number" placeholder="50" />
+            <Field
+              label="Stock"
+              value={form.stock}
+              onChange={(val) => set("stock", val)}
+              type="number"
+              placeholder="50"
+            />
             <Field
               label="Sizes"
-              name="sizes"
+              value={form.sizes}
+              onChange={(val) => set("sizes", val)}
               placeholder="XS, S, M, L, XL"
               hint="Comma-separated"
             />
             <div className="sm:col-span-2">
               <Field
                 label="Image URLs"
-                name="images"
+                value={form.images}
+                onChange={(val) => set("images", val)}
                 placeholder="https://..., https://..."
                 hint="Comma-separated. First image is main."
               />
@@ -218,7 +236,8 @@ function ProductFormModal({
             <div className="sm:col-span-2">
               <Field
                 label="Description"
-                name="description"
+                value={form.description}
+                onChange={(val) => set("description", val)}
                 type="textarea"
                 placeholder="Product description..."
               />
@@ -349,7 +368,6 @@ export default function Admin(): JSX.Element {
     loadProducts();
   }, [loadProducts]);
 
-  // ── Stats ───────────────────────────────────────────────────────────────
   const totalStock = products.reduce((s, p) => s + p.stock, 0);
   const featuredCount = products.filter((p) => p.is_featured).length;
   const outOfStockCount = products.filter((p) => p.stock === 0).length;
@@ -452,9 +470,7 @@ export default function Admin(): JSX.Element {
                       </td>
                       {/* Category */}
                       <td className="px-6 py-4">
-                        <span className="text-xs capitalize text-neutral-600">
-                          {product.category}
-                        </span>
+                        <span className="text-xs capitalize text-neutral-600">{product.category}</span>
                       </td>
                       {/* Price */}
                       <td className="px-6 py-4">
@@ -467,15 +483,13 @@ export default function Admin(): JSX.Element {
                       </td>
                       {/* Stock */}
                       <td className="px-6 py-4">
-                        <span
-                          className={`text-xs font-medium ${
-                            product.stock === 0
-                              ? "text-red-500"
-                              : product.stock < 10
-                              ? "text-amber-500"
-                              : "text-green-600"
-                          }`}
-                        >
+                        <span className={`text-xs font-medium ${
+                          product.stock === 0
+                            ? "text-red-500"
+                            : product.stock < 10
+                            ? "text-amber-500"
+                            : "text-green-600"
+                        }`}>
                           {product.stock === 0 ? "Out of stock" : `${product.stock} units`}
                         </span>
                       </td>
