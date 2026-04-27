@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, type JSX } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, Pencil, Trash2, X, Loader2, Check, PackageSearch } from "lucide-react";
 import { useApp } from "@/context/AppContext";
-import { fetchProducts, createProduct, updateProduct, deleteProduct } from "@/services/productService";
+import { fetchProducts, createProduct, updateProduct, deleteProduct } from "@/services/productServices.ts";
 import { toast } from "sonner";
 import type { Product } from "@/types";
 
