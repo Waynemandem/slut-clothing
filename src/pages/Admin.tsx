@@ -1,15 +1,42 @@
 // src/pages/Admin.tsx
 import { useState, useEffect, useCallback, type JSX } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Pencil, Trash2, X, Loader2, Check, PackageSearch } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Loader2, Check, PackageSearch, ShoppingBag, ChevronRight } from "lucide-react";
 import { useApp } from "@/context/AppContext";
-import { fetchProducts, createProduct, updateProduct, deleteProduct } from "@/services/productServices.ts";
+import { fetchProducts, createProduct, updateProduct, deleteProduct } from "@/services/productService";
+import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import type { Product } from "@/types";
+import type { CartItem } from "@/types";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const formatPrice = (kobo: number) =>
   `₦${(kobo / 100).toLocaleString("en-NG", { minimumFractionDigits: 2 })}`;
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+interface Order {
+  id: string;
+  user_id: string | null;
+  total: number;
+  status: string;
+  created_at: string;
+  items: CartItem[];
+  paystack_reference: string | null;
+  shipping_address: {
+    name: string;
+    line1: string;
+    city: string;
+    state: string;
+    phone: string;
+  } | null;
+}
+
+const STATUS_STYLES: Record<string, string> = {
+  paid:      "bg-green-100 text-green-700",
+  pending:   "bg-yellow-100 text-yellow-700",
+  shipped:   "bg-blue-100 text-blue-700",
+  delivered: "bg-black text-white",
+};
 
 const EMPTY_FORM = {
   name: "",
@@ -28,7 +55,7 @@ const EMPTY_FORM = {
 
 type FormData = typeof EMPTY_FORM;
 
-// ── Field — defined OUTSIDE modal to prevent keyboard dismiss on mobile ────────
+// ── Field ─────────────────────────────────────────────────────────────────────
 interface FieldProps {
   label: string;
   value: string;
@@ -104,14 +131,7 @@ function ProductFormModal({
   const handleNameChange = (name: string) => {
     set("name", name);
     if (!product) {
-      set(
-        "slug",
-        name
-          .toLowerCase()
-          .replace(/[^a-z0-9\s-]/g, "")
-          .trim()
-          .replace(/\s+/g, "-")
-      );
+      set("slug", name.toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-"));
     }
   };
 
@@ -155,7 +175,6 @@ function ProductFormModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-white w-full max-w-2xl max-h-[90vh] flex flex-col">
-        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
           <h2 className="font-bebas text-2xl tracking-wide">
             {product ? "Edit Product" : "New Product"}
@@ -164,87 +183,29 @@ function ProductFormModal({
             <X size={18} />
           </button>
         </div>
-
-        {/* Body */}
         <div className="overflow-y-auto flex-1 px-6 py-6 space-y-5">
           {error && (
             <div className="px-4 py-3 bg-red-50 border border-red-200 text-red-600 text-xs">
               {error}
             </div>
           )}
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="sm:col-span-2">
-              <Field
-                label="Product Name"
-                value={form.name}
-                onChange={handleNameChange}
-                placeholder="SLUT Core Tee Black"
-              />
+              <Field label="Product Name" value={form.name} onChange={handleNameChange} placeholder="SLUT Core Tee Black" />
             </div>
-            <Field
-              label="Slug"
-              value={form.slug}
-              onChange={(val) => set("slug", val)}
-              placeholder="slut-core-tee-black"
-              hint="Auto-generated from name. Used in URL."
-            />
-            <Field
-              label="Category"
-              value={form.category}
-              onChange={(val) => set("category", val)}
-              placeholder="t-shirts"
-            />
-            <Field
-              label="Price (₦)"
-              value={form.price}
-              onChange={(val) => set("price", val)}
-              type="number"
-              placeholder="15000"
-            />
-            <Field
-              label="Compare Price (₦)"
-              value={form.compare_price}
-              onChange={(val) => set("compare_price", val)}
-              type="number"
-              placeholder="20000 (optional)"
-              hint="Shows as strikethrough when set."
-            />
-            <Field
-              label="Stock"
-              value={form.stock}
-              onChange={(val) => set("stock", val)}
-              type="number"
-              placeholder="50"
-            />
-            <Field
-              label="Sizes"
-              value={form.sizes}
-              onChange={(val) => set("sizes", val)}
-              placeholder="XS, S, M, L, XL"
-              hint="Comma-separated"
-            />
+            <Field label="Slug" value={form.slug} onChange={(val) => set("slug", val)} placeholder="slut-core-tee-black" hint="Auto-generated from name. Used in URL." />
+            <Field label="Category" value={form.category} onChange={(val) => set("category", val)} placeholder="t-shirts" />
+            <Field label="Price (₦)" value={form.price} onChange={(val) => set("price", val)} type="number" placeholder="15000" />
+            <Field label="Compare Price (₦)" value={form.compare_price} onChange={(val) => set("compare_price", val)} type="number" placeholder="20000 (optional)" hint="Shows as strikethrough when set." />
+            <Field label="Stock" value={form.stock} onChange={(val) => set("stock", val)} type="number" placeholder="50" />
+            <Field label="Sizes" value={form.sizes} onChange={(val) => set("sizes", val)} placeholder="XS, S, M, L, XL" hint="Comma-separated" />
             <div className="sm:col-span-2">
-              <Field
-                label="Image URLs"
-                value={form.images}
-                onChange={(val) => set("images", val)}
-                placeholder="https://..., https://..."
-                hint="Comma-separated. First image is main."
-              />
+              <Field label="Image URLs" value={form.images} onChange={(val) => set("images", val)} placeholder="https://..., https://..." hint="Comma-separated. First image is main." />
             </div>
             <div className="sm:col-span-2">
-              <Field
-                label="Description"
-                value={form.description}
-                onChange={(val) => set("description", val)}
-                type="textarea"
-                placeholder="Product description..."
-              />
+              <Field label="Description" value={form.description} onChange={(val) => set("description", val)} type="textarea" placeholder="Product description..." />
             </div>
           </div>
-
-          {/* Toggles */}
           <div>
             <p className="text-[11px] font-bold tracking-widest uppercase mb-3">Flags</p>
             <div className="flex flex-wrap gap-3">
@@ -252,11 +213,7 @@ function ProductFormModal({
                 <button
                   key={flag}
                   onClick={() => set(flag, !form[flag])}
-                  className={`flex items-center gap-2 px-4 h-9 border text-xs font-medium tracking-wider uppercase transition-all ${
-                    form[flag]
-                      ? "border-black bg-black text-white"
-                      : "border-neutral-300 text-neutral-500 hover:border-black"
-                  }`}
+                  className={`flex items-center gap-2 px-4 h-9 border text-xs font-medium tracking-wider uppercase transition-all ${form[flag] ? "border-black bg-black text-white" : "border-neutral-300 text-neutral-500 hover:border-black"}`}
                 >
                   {form[flag] && <Check size={12} />}
                   {flag === "is_featured" && "Featured"}
@@ -267,20 +224,11 @@ function ProductFormModal({
             </div>
           </div>
         </div>
-
-        {/* Footer */}
         <div className="px-6 py-4 border-t border-neutral-200 flex gap-3 justify-end">
-          <button
-            onClick={onClose}
-            className="h-10 px-6 border border-neutral-300 text-xs font-bold tracking-widest uppercase hover:border-black transition-colors"
-          >
+          <button onClick={onClose} className="h-10 px-6 border border-neutral-300 text-xs font-bold tracking-widest uppercase hover:border-black transition-colors">
             Cancel
           </button>
-          <button
-            onClick={handleSave}
-            disabled={loading}
-            className="h-10 px-6 bg-black text-white text-xs font-bold tracking-widest uppercase flex items-center gap-2 hover:bg-neutral-800 transition-colors disabled:opacity-50"
-          >
+          <button onClick={handleSave} disabled={loading} className="h-10 px-6 bg-black text-white text-xs font-bold tracking-widest uppercase flex items-center gap-2 hover:bg-neutral-800 transition-colors disabled:opacity-50">
             {loading ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
             {product ? "Save Changes" : "Create Product"}
           </button>
@@ -316,24 +264,137 @@ function DeleteConfirmModal({
       <div className="bg-white w-full max-w-sm p-8">
         <h2 className="font-bebas text-2xl tracking-wide mb-2">Delete Product?</h2>
         <p className="text-sm text-neutral-600 mb-6">
-          <span className="font-semibold">{product.name}</span> will be permanently deleted.
-          This cannot be undone.
+          <span className="font-semibold">{product.name}</span> will be permanently deleted. This cannot be undone.
         </p>
         <div className="flex gap-3">
-          <button
-            onClick={onClose}
-            className="flex-1 h-10 border border-neutral-300 text-xs font-bold tracking-widest uppercase hover:border-black transition-colors"
-          >
+          <button onClick={onClose} className="flex-1 h-10 border border-neutral-300 text-xs font-bold tracking-widest uppercase hover:border-black transition-colors">
             Cancel
           </button>
-          <button
-            onClick={handleDelete}
-            disabled={loading}
-            className="flex-1 h-10 bg-red-600 text-white text-xs font-bold tracking-widest uppercase flex items-center justify-center gap-2 hover:bg-red-700 transition-colors disabled:opacity-50"
-          >
+          <button onClick={handleDelete} disabled={loading} className="flex-1 h-10 bg-red-600 text-white text-xs font-bold tracking-widest uppercase flex items-center justify-center gap-2 hover:bg-red-700 transition-colors disabled:opacity-50">
             {loading ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
             Delete
           </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Order Detail Modal ────────────────────────────────────────────────────────
+function OrderDetailModal({
+  order,
+  onClose,
+  onStatusChange,
+}: {
+  order: Order;
+  onClose: () => void;
+  onStatusChange: () => void;
+}) {
+  const [loading, setLoading] = useState(false);
+
+  const updateStatus = async (status: string) => {
+    setLoading(true);
+    const { error } = await supabase
+      .from("orders")
+      .update({ status })
+      .eq("id", order.id);
+    setLoading(false);
+    if (error) {
+      toast.error("Failed to update status");
+    } else {
+      toast.success(`Order marked as ${status}`);
+      onStatusChange();
+      onClose();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div className="bg-white w-full max-w-lg max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
+          <h2 className="font-bebas text-2xl tracking-wide">Order Details</h2>
+          <button onClick={onClose} className="text-neutral-400 hover:text-black transition-colors">
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="overflow-y-auto flex-1 px-6 py-6 space-y-6">
+          {/* Reference + status */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[11px] text-neutral-400 tracking-widest uppercase mb-1">Reference</p>
+              <p className="font-mono text-sm">{order.paystack_reference ?? order.id.slice(0, 12)}</p>
+            </div>
+            <span className={`text-[9px] font-bold tracking-widest uppercase px-2 py-1 ${STATUS_STYLES[order.status] ?? "bg-neutral-100 text-neutral-500"}`}>
+              {order.status}
+            </span>
+          </div>
+
+          {/* Date */}
+          <div>
+            <p className="text-[11px] text-neutral-400 tracking-widest uppercase mb-1">Date</p>
+            <p className="text-sm">{new Date(order.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
+          </div>
+
+          {/* Shipping address */}
+          {order.shipping_address && (
+            <div>
+              <p className="text-[11px] text-neutral-400 tracking-widest uppercase mb-2">Ship To</p>
+              <div className="bg-neutral-50 border border-neutral-200 p-4 text-sm space-y-0.5">
+                <p className="font-medium">{order.shipping_address.name}</p>
+                <p className="text-neutral-600">{order.shipping_address.line1}</p>
+                <p className="text-neutral-600">{order.shipping_address.city}, {order.shipping_address.state}</p>
+                <p className="text-neutral-600">Nigeria</p>
+                {order.shipping_address.phone && (
+                  <p className="text-neutral-500 text-xs mt-1">{order.shipping_address.phone}</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Items */}
+          <div>
+            <p className="text-[11px] text-neutral-400 tracking-widest uppercase mb-3">Items</p>
+            <div className="space-y-3">
+              {order.items.map((item, i) => (
+                <div key={`${item.id}-${item.size}-${i}`} className="flex items-center gap-3">
+                  <div className="w-12 h-14 bg-neutral-100 overflow-hidden flex-shrink-0">
+                    {item.images?.[0] && (
+                      <img src={item.images[0]} alt={item.name} className="w-full h-full object-cover" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{item.name}</p>
+                    <p className="text-[11px] text-neutral-400">Size: {item.size} · Qty: {item.quantity}</p>
+                  </div>
+                  <span className="text-sm font-medium">{formatPrice(item.price * item.quantity)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Total */}
+          <div className="border-t border-neutral-200 pt-4 flex justify-between font-bold text-sm">
+            <span>Total Paid</span>
+            <span>{formatPrice(order.total)}</span>
+          </div>
+
+          {/* Update status */}
+          <div>
+            <p className="text-[11px] text-neutral-400 tracking-widest uppercase mb-3">Update Status</p>
+            <div className="flex flex-wrap gap-2">
+              {["pending", "paid", "shipped", "delivered"].map((status) => (
+                <button
+                  key={status}
+                  onClick={() => updateStatus(status)}
+                  disabled={loading || order.status === status}
+                  className={`h-9 px-4 text-xs font-bold tracking-widest uppercase border transition-all disabled:opacity-40 ${order.status === status ? "border-black bg-black text-white" : "border-neutral-300 hover:border-black"}`}
+                >
+                  {status}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -345,10 +406,19 @@ export default function Admin(): JSX.Element {
   const navigate = useNavigate();
   const { user, isAdmin } = useApp();
 
+  // Products state
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [productsLoading, setProductsLoading] = useState(true);
   const [editingProduct, setEditingProduct] = useState<Product | null | "new">(null);
   const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
+
+  // Orders state
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(true);
+  const [viewingOrder, setViewingOrder] = useState<Order | null>(null);
+
+  // Tab state
+  const [activeTab, setActiveTab] = useState<"products" | "orders">("products");
 
   // ── Auth guard ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -358,19 +428,34 @@ export default function Admin(): JSX.Element {
 
   // ── Load products ───────────────────────────────────────────────────────
   const loadProducts = useCallback(async () => {
-    setLoading(true);
+    setProductsLoading(true);
     const { data } = await fetchProducts();
     setProducts(data ?? []);
-    setLoading(false);
+    setProductsLoading(false);
+  }, []);
+
+  // ── Load orders ─────────────────────────────────────────────────────────
+  const loadOrders = useCallback(async () => {
+    setOrdersLoading(true);
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) toast.error("Failed to load orders");
+    setOrders((data as Order[]) ?? []);
+    setOrdersLoading(false);
   }, []);
 
   useEffect(() => {
     loadProducts();
-  }, [loadProducts]);
+    loadOrders();
+  }, [loadProducts, loadOrders]);
 
+  // ── Stats ───────────────────────────────────────────────────────────────
   const totalStock = products.reduce((s, p) => s + p.stock, 0);
   const featuredCount = products.filter((p) => p.is_featured).length;
   const outOfStockCount = products.filter((p) => p.stock === 0).length;
+  const totalRevenue = orders.filter((o) => o.status === "paid" || o.status === "delivered").reduce((s, o) => s + o.total, 0);
 
   if (!user || !isAdmin) return <></>;
 
@@ -382,161 +467,188 @@ export default function Admin(): JSX.Element {
           <div>
             <h1 className="font-bebas text-3xl tracking-widest">Admin Dashboard</h1>
             <p className="text-neutral-400 text-xs tracking-widest uppercase mt-0.5">
-              Product Management
+              {activeTab === "products" ? "Product Management" : "Order Management"}
             </p>
           </div>
-          <button
-            onClick={() => setEditingProduct("new")}
-            className="flex items-center gap-2 h-10 px-5 bg-white text-black text-xs font-bold tracking-widest uppercase hover:bg-neutral-100 transition-colors"
-          >
-            <Plus size={14} />
-            Add Product
-          </button>
+          {activeTab === "products" && (
+            <button
+              onClick={() => setEditingProduct("new")}
+              className="flex items-center gap-2 h-10 px-5 bg-white text-black text-xs font-bold tracking-widest uppercase hover:bg-neutral-100 transition-colors"
+            >
+              <Plus size={14} />
+              Add Product
+            </button>
+          )}
         </div>
       </div>
 
       <div className="max-w-screen-xl mx-auto px-6 md:px-10 py-8">
+
         {/* Stats row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
             { label: "Total Products", value: products.length },
             { label: "Total Stock", value: totalStock },
-            { label: "Featured", value: featuredCount },
-            { label: "Out of Stock", value: outOfStockCount, alert: outOfStockCount > 0 },
-          ].map(({ label, value, alert }) => (
+            { label: "Total Orders", value: orders.length },
+            { label: "Revenue", value: formatPrice(totalRevenue) },
+          ].map(({ label, value }) => (
             <div key={label} className="bg-white border border-neutral-200 px-5 py-4">
               <p className="text-[11px] tracking-widest uppercase text-neutral-400 mb-1">{label}</p>
-              <p className={`font-bebas text-3xl tracking-wide ${alert ? "text-red-600" : "text-black"}`}>
-                {value}
-              </p>
+              <p className="font-bebas text-2xl md:text-3xl tracking-wide text-black">{value}</p>
             </div>
           ))}
         </div>
 
-        {/* Products table */}
-        <div className="bg-white border border-neutral-200">
-          <div className="px-6 py-4 border-b border-neutral-200 flex items-center justify-between">
-            <h2 className="text-xs font-bold tracking-widest uppercase">All Products</h2>
-            <span className="text-xs text-neutral-400">{products.length} items</span>
-          </div>
-
-          {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 size={20} className="animate-spin text-neutral-300" />
-            </div>
-          ) : products.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-3 text-neutral-400">
-              <PackageSearch size={32} strokeWidth={1} />
-              <p className="text-sm">No products yet</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-neutral-100">
-                    {["Product", "Category", "Price", "Stock", "Flags", "Actions"].map((h) => (
-                      <th
-                        key={h}
-                        className="px-6 py-3 text-left text-[11px] font-bold tracking-widest uppercase text-neutral-400"
-                      >
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.map((product) => (
-                    <tr
-                      key={product.id}
-                      className="border-b border-neutral-50 hover:bg-neutral-50 transition-colors"
-                    >
-                      {/* Product */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-neutral-100 overflow-hidden flex-shrink-0">
-                            {product.images[0] && (
-                              <img
-                                src={product.images[0]}
-                                alt={product.name}
-                                className="w-full h-full object-cover"
-                              />
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-medium text-sm leading-tight">{product.name}</p>
-                            <p className="text-[11px] text-neutral-400 mt-0.5">{product.slug}</p>
-                          </div>
-                        </div>
-                      </td>
-                      {/* Category */}
-                      <td className="px-6 py-4">
-                        <span className="text-xs capitalize text-neutral-600">{product.category}</span>
-                      </td>
-                      {/* Price */}
-                      <td className="px-6 py-4">
-                        <span className="text-sm font-medium">{formatPrice(product.price)}</span>
-                        {product.compare_price && (
-                          <span className="text-xs text-neutral-400 line-through ml-2">
-                            {formatPrice(product.compare_price)}
-                          </span>
-                        )}
-                      </td>
-                      {/* Stock */}
-                      <td className="px-6 py-4">
-                        <span className={`text-xs font-medium ${
-                          product.stock === 0
-                            ? "text-red-500"
-                            : product.stock < 10
-                            ? "text-amber-500"
-                            : "text-green-600"
-                        }`}>
-                          {product.stock === 0 ? "Out of stock" : `${product.stock} units`}
-                        </span>
-                      </td>
-                      {/* Flags */}
-                      <td className="px-6 py-4">
-                        <div className="flex gap-1 flex-wrap">
-                          {product.is_featured && (
-                            <span className="text-[9px] font-bold tracking-wider uppercase bg-black text-white px-1.5 py-0.5">
-                              Featured
-                            </span>
-                          )}
-                          {product.is_new && (
-                            <span className="text-[9px] font-bold tracking-wider uppercase bg-blue-600 text-white px-1.5 py-0.5">
-                              New
-                            </span>
-                          )}
-                          {product.is_sale && (
-                            <span className="text-[9px] font-bold tracking-wider uppercase bg-red-600 text-white px-1.5 py-0.5">
-                              Sale
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      {/* Actions */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => setEditingProduct(product)}
-                            className="w-8 h-8 flex items-center justify-center border border-neutral-200 text-neutral-500 hover:border-black hover:text-black transition-colors"
-                          >
-                            <Pencil size={13} />
-                          </button>
-                          <button
-                            onClick={() => setDeletingProduct(product)}
-                            className="w-8 h-8 flex items-center justify-center border border-neutral-200 text-neutral-500 hover:border-red-500 hover:text-red-500 transition-colors"
-                          >
-                            <Trash2 size={13} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+        {/* Tabs */}
+        <div className="flex border-b border-neutral-200 mb-6">
+          {(["products", "orders"] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-6 py-3 text-xs font-bold tracking-widest uppercase transition-colors ${activeTab === tab ? "border-b-2 border-black text-black" : "text-neutral-400 hover:text-black"}`}
+            >
+              {tab === "products" ? `Products (${products.length})` : `Orders (${orders.length})`}
+            </button>
+          ))}
         </div>
+
+        {/* ── Products Tab ── */}
+        {activeTab === "products" && (
+          <div className="bg-white border border-neutral-200">
+            <div className="px-6 py-4 border-b border-neutral-200 flex items-center justify-between">
+              <h2 className="text-xs font-bold tracking-widest uppercase">All Products</h2>
+              <span className="text-xs text-neutral-400">{products.length} items</span>
+            </div>
+            {productsLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 size={20} className="animate-spin text-neutral-300" />
+              </div>
+            ) : products.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 gap-3 text-neutral-400">
+                <PackageSearch size={32} strokeWidth={1} />
+                <p className="text-sm">No products yet</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-neutral-100">
+                      {["Product", "Category", "Price", "Stock", "Flags", "Actions"].map((h) => (
+                        <th key={h} className="px-6 py-3 text-left text-[11px] font-bold tracking-widest uppercase text-neutral-400">
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {products.map((product) => (
+                      <tr key={product.id} className="border-b border-neutral-50 hover:bg-neutral-50 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-neutral-100 overflow-hidden flex-shrink-0">
+                              {product.images[0] && (
+                                <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                              )}
+                            </div>
+                            <div>
+                              <p className="font-medium text-sm leading-tight">{product.name}</p>
+                              <p className="text-[11px] text-neutral-400 mt-0.5">{product.slug}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-xs capitalize text-neutral-600">{product.category}</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-sm font-medium">{formatPrice(product.price)}</span>
+                          {product.compare_price && (
+                            <span className="text-xs text-neutral-400 line-through ml-2">{formatPrice(product.compare_price)}</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`text-xs font-medium ${product.stock === 0 ? "text-red-500" : product.stock < 10 ? "text-amber-500" : "text-green-600"}`}>
+                            {product.stock === 0 ? "Out of stock" : `${product.stock} units`}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex gap-1 flex-wrap">
+                            {product.is_featured && <span className="text-[9px] font-bold tracking-wider uppercase bg-black text-white px-1.5 py-0.5">Featured</span>}
+                            {product.is_new && <span className="text-[9px] font-bold tracking-wider uppercase bg-blue-600 text-white px-1.5 py-0.5">New</span>}
+                            {product.is_sale && <span className="text-[9px] font-bold tracking-wider uppercase bg-red-600 text-white px-1.5 py-0.5">Sale</span>}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <button onClick={() => setEditingProduct(product)} className="w-8 h-8 flex items-center justify-center border border-neutral-200 text-neutral-500 hover:border-black hover:text-black transition-colors">
+                              <Pencil size={13} />
+                            </button>
+                            <button onClick={() => setDeletingProduct(product)} className="w-8 h-8 flex items-center justify-center border border-neutral-200 text-neutral-500 hover:border-red-500 hover:text-red-500 transition-colors">
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Orders Tab ── */}
+        {activeTab === "orders" && (
+          <div className="bg-white border border-neutral-200">
+            <div className="px-6 py-4 border-b border-neutral-200 flex items-center justify-between">
+              <h2 className="text-xs font-bold tracking-widest uppercase">All Orders</h2>
+              <span className="text-xs text-neutral-400">{orders.length} orders</span>
+            </div>
+
+            {ordersLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 size={20} className="animate-spin text-neutral-300" />
+              </div>
+            ) : orders.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 gap-3 text-neutral-400">
+                <ShoppingBag size={32} strokeWidth={1} />
+                <p className="text-sm">No orders yet</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-neutral-100">
+                {orders.map((order) => (
+                  <button
+                    key={order.id}
+                    onClick={() => setViewingOrder(order)}
+                    className="w-full px-6 py-5 flex items-center justify-between hover:bg-neutral-50 transition-colors text-left"
+                  >
+                    <div className="flex flex-col gap-1">
+                      <p className="text-xs font-mono text-neutral-400">
+                        {order.paystack_reference ?? order.id.slice(0, 12)}
+                      </p>
+                      <p className="text-sm font-medium">
+                        {order.shipping_address?.name ?? "Guest"}
+                        <span className="text-neutral-400 font-normal ml-2">
+                          · {order.items.length} {order.items.length === 1 ? "item" : "items"}
+                        </span>
+                      </p>
+                      <p className="text-[11px] text-neutral-400">
+                        {new Date(order.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                        {order.shipping_address && ` · ${order.shipping_address.city}`}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4 flex-shrink-0 ml-4">
+                      <span className="text-sm font-bold">{formatPrice(order.total)}</span>
+                      <span className={`text-[9px] font-bold tracking-widest uppercase px-2 py-1 ${STATUS_STYLES[order.status] ?? "bg-neutral-100 text-neutral-500"}`}>
+                        {order.status}
+                      </span>
+                      <ChevronRight size={14} className="text-neutral-300" />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Modals */}
@@ -552,6 +664,13 @@ export default function Admin(): JSX.Element {
           product={deletingProduct}
           onClose={() => setDeletingProduct(null)}
           onConfirm={loadProducts}
+        />
+      )}
+      {viewingOrder && (
+        <OrderDetailModal
+          order={viewingOrder}
+          onClose={() => setViewingOrder(null)}
+          onStatusChange={loadOrders}
         />
       )}
     </div>
