@@ -1,12 +1,8 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// src/layout/Layout.tsx
-// Wraps every page with Navbar + Footer.
-// Usage in App.tsx: <Route path="/" element={<Layout><Home /></Layout>} />
-// ─────────────────────────────────────────────────────────────────────────────
-
-import type { ReactNode } from 'react';
+// ✅ After
+import type { ReactNode, JSX } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import PageTransition from '../components/PageTransition';
 
 interface LayoutProps {
   children: ReactNode;
@@ -16,7 +12,11 @@ function Layout({ children }: LayoutProps): JSX.Element {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1">
+        <PageTransition>
+          {children}
+        </PageTransition>
+      </main>
       <Footer />
     </div>
   );
