@@ -222,9 +222,9 @@ export default function Account(): JSX.Element {
                       <span className="text-sm font-bold">{formatPrice(order.total)}</span>
                       {/* Status badge */}
                       <span
-                        className={`text-[9px] font-bold tracking-widest uppercase px-2 py-1 ${
-                          STATUS_STYLES[order.status] ?? "bg-neutral-100 text-neutral-500"
-                        }`}
+                        // ✅ Fixed
+                         className={`text-[9px] font-bold tracking-widest uppercase px-2 py-1 ${STATUS_STYLES[order.status] ?? 
+                                   "bg-neutral-100 text-neutral-500"}`}
                       >
                         {order.status}
                       </span>
